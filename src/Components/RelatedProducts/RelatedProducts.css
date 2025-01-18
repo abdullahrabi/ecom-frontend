@@ -1,0 +1,58 @@
+.relatedproducts{
+  
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    padding-bottom: 50px;
+    
+}
+.relatedproducts h1{
+    color: #171717;
+    font-size: 50px;
+    font-weight: 600;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    
+
+}
+.relatedproducts h1:hover{
+    color: rgb(11, 102, 35);
+    cursor: pointer;
+    text-decoration:wavy;
+}
+.relatedproducts hr{
+          
+                    
+    border-bottom: 6px solid black;     
+    width: 300px; 
+    margin-bottom: 50px; 
+}
+
+.relatedproducts-items{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    margin-top: 50px;
+    gap: 50px;
+    position: relative;
+    text-align: center;
+    
+}
+.relatedproducts-items img{
+    height: 350px;
+    width: 350px;
+}
+.scroll-to-top {
+    position: fixed;
+    bottom: 20px; /* Fixed near the bottom of the page */
+    right: 20px;  /* Fixed near the right side of the page */
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    z-index: 1000; /* Ensure it's on top of other content */
+    opacity: 1;
+    display: block;
+    transition: opacity 0.3s ease;
+    background: transparent;
+    
+  }

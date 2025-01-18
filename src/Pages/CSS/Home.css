@@ -1,0 +1,169 @@
+
+.menu-1{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    margin: 70px;
+    text-align: center;
+    color: black;
+    font-family: 'Montserrat';
+    font-size: 20px;
+    gap: 150px;
+    margin-top: 100px;
+    margin-left: 240px;
+    margin-right: 240px;
+    align-items: center;
+    cursor: pointer;
+    justify-content: center;
+    position: relative;
+    
+}
+.menu-1 img{
+    height: 200px;
+    width: 210px;
+  
+}
+.menu-1 img:hover{
+    transform: scale(1.05);
+    transition: 0.6s;
+}
+.Link1{
+    text-decoration: none;
+    color: inherit;
+    background-color: transparent; 
+}
+.Link1 h4:hover{
+    color: rgb(11, 102, 35);
+    font-weight: 1000;
+    font-size: larger;
+}
+.Link1  h4:active{
+    text-decoration: underline;
+}
+
+.Link2{
+    text-decoration: none;
+    color: inherit;
+}
+.Link2 h4:hover{
+    color:rgb(11, 102, 35);
+    font-weight: 1000;
+   font-size: larger;
+
+}
+.Link2 h4:active{
+    text-decoration: underline;
+}
+.Link3{
+    text-decoration: none;
+    color: inherit;
+}
+.Link3 h4:hover{
+    color:rgb(11, 102, 35);
+    border-radius: 4px;
+    font-weight: 1000;
+    font-size: larger;
+}
+
+.Link3 h4:active{
+    text-decoration: underline;
+}
+.menu-1 h4{
+    color: black;
+    font-family: 'Montserrat';
+    font-size: 23px;
+    margin-top: 10px;
+}
+
+.Link4{
+    text-decoration: none;
+    color: inherit;
+}
+.Link4 h4:hover{
+    color:rgb(11, 102, 35);
+    font-weight: 1000;
+    font-size: larger;
+
+   
+}
+.Link4 h4:active{
+    text-decoration: underline;
+    
+}
+.Link5{
+    text-decoration: none;
+    color: inherit;
+    
+}
+.Link5 h4:hover{
+    color:rgb(11, 102, 35);
+    font-weight: 1000;
+    font-size: larger;
+
+    
+}
+.Link5 h4:active{
+    text-decoration: underline;
+   
+}
+.Link6{
+    text-decoration: none;
+    color: inherit;
+    
+}
+.Link6 h4:hover{
+    color:rgb(11, 102, 35);
+    font-weight: 1000;
+    font-size: larger;
+
+    
+}
+.Link6 h4:active{
+    text-decoration: underline;
+   
+}
+.menu-2{
+  
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: center;
+    margin: auto;
+    margin-left: 60px;
+    position: relative;
+    align-content: center;
+    align-self: center;
+    
+
+}
+
+.menu-2 img{
+
+    width: auto; 
+    height: 300px; 
+}
+
+.menu-2 img:hover{
+    transform: scale(1.05); 
+    transition: transform 0.6s ease; 
+}
+
+.scroll-to-top {
+    position: fixed;
+    bottom: 20px; /* Fixed near the bottom of the page */
+    right: 20px;  /* Fixed near the right side of the page */
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    z-index: 1000; /* Ensure it's on top of other content */
+    opacity: 1;
+    display: block;
+    transition: opacity 0.3s ease;
+    background: transparent;
+    
+  }
+
+  
+  .scroll-to-top:hover{
+    transform: scale(1.05); 
+    transition: transform 0.6s ease; 
+}
