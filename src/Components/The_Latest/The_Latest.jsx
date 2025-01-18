@@ -6,7 +6,7 @@ import Item from "../Item/Item"
 export const The_Latest = () => {
   const [The_Latest_Data,setThe_Latest_Data] =useState([]);
   useEffect(()=>{
-    fetch('http://localhost:5000/LatestItems')
+    fetch('https://dept-store-backend-idke.vercel.app/LatestItems')
     .then((response)=>response.json())
     .then((data)=>setThe_Latest_Data(data));
   },[])

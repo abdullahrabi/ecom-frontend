@@ -15,7 +15,7 @@ const ShopContextProvider = (props) => {
 
     // Fetch all products on component mount
     useEffect(() => {
-        fetch('http://localhost:5000/allproducts')
+        fetch('https://dept-store-backend-idke.vercel.app/allproducts')
             .then((response) => response.json())
             .then((data) => setAll_Product(data));
     }, []);
