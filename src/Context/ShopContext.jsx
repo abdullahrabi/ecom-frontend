@@ -18,10 +18,27 @@ const ShopContextProvider = (props) => {
 
     // Fetch all products on component mount
     useEffect(() => {
-        fetch('http://localhost:5000/allproducts')
+        fetch('https://dept-store-backend.vercel.app/allproducts')
             .then((response) => response.json())
             .then((data) => setAll_Product(data));
-    }, []);
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+            if(token){
+                 fetch('https://dept-store-backend.vercel.app/getcart',{
+                    method: 'POST',
+                    headers: {
+                       Accept: 'application/form-data',
+                       'Authorization': `Bearer ${token}`,
+                       'Content-Type': 'application/json',
+                    },
+                body:"",
+        
+                 }) .then((response)=>response.json())
+                 .then((data)=>setCartItems(data));
+            }
+              
+            
+
+    }, [])
 
     // Add item to the cart and update the backend
     const addToCart = (itemId) => {
@@ -31,7 +48,7 @@ const ShopContextProvider = (props) => {
         // API call to add to cart
         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         if (token) {
-            fetch('http://localhost:5000/addtocart', {
+            fetch('https://dept-store-backend.vercel.app/addtocart', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -42,7 +59,8 @@ const ShopContextProvider = (props) => {
             .then((response) => response.json())
             .then((data) => console.log("Added to cart:", data))
             .catch((error) => console.error('Error adding to cart:', error));
-        } else {
+        } 
+        else {
             console.error('No token found. User not authenticated.');
         }
     };
@@ -68,7 +86,7 @@ const ShopContextProvider = (props) => {
         // API call to remove from cart or update quantity
         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         if (token) {
-            fetch('http://localhost:5000/removetocart', {
+            fetch('https://dept-store-backend.vercel.app/removetocart', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,

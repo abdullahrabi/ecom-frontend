@@ -53,7 +53,7 @@ const LoginForm = ({ onToggle }) => {
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://dept-store-backend-idke.vercel.app/api/auth/login', { email, password });
+      const response = await axios.post('https://dept-store-backend.vercel.app/api/auth/login', { email, password });
       
       // Add a check to ensure response and response.data exist
       if (response && response.data && response.data.token) {
@@ -143,7 +143,7 @@ const SignupForm = ({ onToggle }) => {
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://dept-store-backend-idke.vercel.app/api/auth/register', { name: username, email, password });
+      const response = await axios.post('https://dept-store-backend.vercel.app/api/auth/register', { name: username, email, password });
       
       // Add a check to ensure response and response.data exist
       if (response && response.data && response.data.message) {

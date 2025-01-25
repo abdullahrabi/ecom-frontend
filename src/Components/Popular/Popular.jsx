@@ -9,7 +9,7 @@ export const Popular = () => {
     const fetchPopularItems = async () => {
       try {
         console.log("Fetching Popular Fruits and Vegetables");
-        const response = await fetch('https://dept-store-backend-idke.vercel.app/popularinvegetables');
+        const response = await fetch('https://dept-store-backend.vercel.app/popularinvegetables');
         const data = await response.json();
         setPopularProducts(data);
         console.log("Popular in Fruits and Vegetables is Fetched");
