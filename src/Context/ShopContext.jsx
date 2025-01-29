@@ -38,7 +38,7 @@ const ShopContextProvider = (props) => {
               
             
 
-    }, [])
+        },[cartItems] );
 
     // Add item to the cart and update the backend
     const addToCart = (itemId) => {
@@ -68,7 +68,23 @@ const ShopContextProvider = (props) => {
     // Update the quantity of items in the cart
     const updateCartQuantity = (itemId, quantity) => {
         setCartItems((prev) => ({ ...prev, [itemId]: quantity }));
-
+        // API call to update the backend
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        if (token) {
+            fetch('https://dept-store-backend.vercel.app/updatecart', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ itemId, quantity }) // Send updated quantity to backend
+            })
+            .then((response) => response.json())
+            .then((data) => console.log("Updated cart:", data))
+            .catch((error) => console.error('Error updating cart:', error));
+        } else {
+            console.error('No token found. User not authenticated.');
+        }
         
     };
 

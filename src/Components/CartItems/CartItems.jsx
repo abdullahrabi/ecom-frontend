@@ -21,13 +21,14 @@ const CartItems = () => {
         console.log('Total items in cart:', totalCartItems);  // Check if totalCartItems is calculated correctly
     }, [cartItems]);
 
-    // Update cart quantity when user enters it manually
-    const handleQuantityChange = (event, productId) => {
-        const newQuantity = parseInt(event.target.value, 10);
-        if (!isNaN(newQuantity) && newQuantity > 0) {
-            updateCartQuantity(productId, newQuantity);  // Call a function to update the cart's quantity
-        }
-    };
+   // Update cart quantity when user enters it manually
+const handleQuantityChange = (event, productId) => {
+    const newQuantity = parseInt(event.target.value, 10);
+    if (!isNaN(newQuantity) && newQuantity >= 0) {
+        updateCartQuantity(productId, newQuantity);  // Update quantity in context
+    }
+};
+
 
     const handleCheckout = () => {
         if (!isAuthenticated) {
