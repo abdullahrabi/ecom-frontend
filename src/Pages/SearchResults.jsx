@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import all_product from '../Components/Assests/data/all_product';
+import axios from 'axios';
 import './CSS/SearchResults.css';
 import Item from '../Components/Item/Item';
 
@@ -8,16 +8,46 @@ const SearchResults = () => {
   const location = useLocation();
   const searchQuery = new URLSearchParams(location.search).get('query')?.toLowerCase() || '';
 
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch products from API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get('https://dept-store-backend.vercel.app/allproducts');
+        setProducts(response.data);
+        setLoading(false);
+      } catch (error) {
+        setError('Failed to fetch products.');
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
   // Filter products based on search query
-  const filteredResults = all_product.filter((product) =>
+  const filteredResults = products.filter((product) =>
     product.name.toLowerCase().includes(searchQuery)
   );
+
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
       behavior: 'smooth', // Smooth scrolling
     });
   };
+
+  if (loading) {
+    return <p>Loading products...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
+
   return (
     <div className='searchbar-container'>
       <h2>Search Results for "{searchQuery}"</h2>
@@ -28,7 +58,7 @@ const SearchResults = () => {
               <Item
                 id={product.id}
                 name={product.name}
-                image={product.image} 
+                image={product.image}
                 new_price={product.new_price}
                 old_price={product.old_price}
                 scrollToTop={scrollToTop} // Pass the function to Item

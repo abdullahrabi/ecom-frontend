@@ -76,6 +76,18 @@ import p75_img from './S11.jpg'
 import p76_img from './S12.jpg'
 import p77_img from './S13.jpg'
 import p78_img from './S14.jpg'
+import p79_img from './F1.jpg'
+import p80_img from './F2.jpg'
+import p81_img from './F3.jpg'
+import p82_img from './F4.png'
+import p83_img from './F5.jpg'
+import p84_img from './F6.png'
+import p85_img from './F7.png'
+import p86_img from './F8.jpg'
+import p87_img from './F9.png'
+import p88_img from './F10.png'
+import p89_img from './F11.png'
+import p90_img from './F12.png'
 let all_product = [
     {
         id:1,
@@ -786,6 +798,113 @@ let all_product = [
         old_price: 2750,
     
     },
+    {
+        id:79,
+        name:"APPLE",
+        category:"Fruits_Vegetables",
+        image:p79_img,
+        new_price: 250,
+        old_price: 280,
     
+    },
+    {
+        id:80,
+        name:"BANANA",
+        category:"Fruits_Vegetables",
+        image:p80_img,
+        new_price: 150,
+        old_price: 160,
+    
+    },
+    {
+        id:81,
+        name:"KINO PER KG",
+        category:"Fruits_Vegetables",
+        image:p81_img,
+        new_price: 200,
+        old_price: 220,
+    
+    },
+    {
+        id:82,
+        name:"POTATOES",
+        category:"Fruits_Vegetables",
+        image:p82_img,
+        new_price: 80,
+        old_price: 100,
+    
+    },
+    {
+        id:83,
+        name:"CARROTS",
+        category:"Fruits_Vegetables",
+        image:p83_img,
+        new_price: 40,
+        old_price: 50,
+    
+    },
+    {
+        id:84,
+        name:"CUCUMBER",
+        category:"Fruits_Vegetables",
+        image:p84_img,
+        new_price: 40,
+        old_price: 50,
+    
+    },
+    {
+        id:85,
+        name:"GUAVA",
+        category:"Fruits_Vegetables",
+        image:p85_img,
+        new_price: 150,
+        old_price: 160,
+    
+    },
+    {
+        id:86,
+        name:"POMEGRANATE(ANNAR)",
+        category:"Fruits_Vegetables",
+        image:p86_img,
+        new_price: 650,
+        old_price: 700,
+    
+    },
+    {
+        id:87,
+        name:"SWEET LIME(MUSAMI) Dozen",
+        category:"Fruits_Vegetables",
+        image:p87_img,
+        new_price: 150,
+        old_price: 200,
+    
+    },
+    {
+        id:88,
+        name:"LEAFY GREENS(SAAG)",
+        category:"Fruits_Vegetables",
+        image:p88_img,
+        new_price: 60,
+        old_price: 80,
+    
+    },
+    {
+        id:89,
+        name:"CAULIFLOWER(GOOBI)",
+        category:"Fruits_Vegetables",
+        image:p89_img,
+        new_price: 80,
+        old_price: 100,
+    
+    },
+    {
+        id:90,
+        name:"CAPSICUM(SHIMLA MIRCH)",
+        category:"Fruits_Vegetables",
+        image:p90_img,
+        new_price: 120,
+        old_price: 140,
+    
+    },
     ];
     export default all_product;

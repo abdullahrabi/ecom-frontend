@@ -38,7 +38,7 @@ const ShopContextProvider = (props) => {
               
             
 
-        },[cartItems] );
+        },[] );
 
     // Add item to the cart and update the backend
     const addToCart = (itemId) => {
