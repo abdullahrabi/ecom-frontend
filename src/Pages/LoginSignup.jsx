@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import './CSS/LoginSignup.css'; // Your custom CSS
 import { useSpring, animated } from '@react-spring/web'; // React Spring for animations
 import login_icon from '../Components/Assests/Login.jpg';
@@ -8,7 +8,7 @@ import eye_off_icon from '../Components/Assests/eye_off_icon.png'; // Your custo
 import axios from 'axios';
 import { toast } from 'react-toastify';  
 import { useNavigate } from 'react-router-dom';
-
+import { ShopContext } from '../Context/ShopContext';
 // Password Input Component
 const PasswordInput = ({ placeholder, onChange, value, id, name }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -49,27 +49,32 @@ const LoginForm = ({ onToggle }) => {
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false); // State for Remember Me
   const navigate = useNavigate();
+  const { updateToken } = useContext(ShopContext); 
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://dept-store-backend.vercel.app/api/auth/login', { email, password });
+      const response = await axios.post('https://dept-store-auth-server.vercel.app/api/auth/login', { email, password });
       
       // Add a check to ensure response and response.data exist
       if (response && response.data && response.data.token) {
         const { token } = response.data;
-  
         // Store the JWT token in localStorage or sessionStorage based on "Remember Me"
         if (rememberMe) {
           localStorage.setItem('token', token); // Store token in localStorage
         } else {
+          localStorage.setItem('token', token); // Store token in localStorage
           sessionStorage.setItem('token', token); // Store token in sessionStorage
         }
   
         // Clear password from memory
         setPassword('');
-  
+        updateToken(token); // Update context token
+
         toast.success("Login Successfully");
+        
+            // const { getTotalCartAmount } = useContext(ShopContext);
+        
         navigate('/');  // Redirect to homepage after login
       } else {
         // Handle cases where response does not contain the expected data
@@ -143,7 +148,7 @@ const SignupForm = ({ onToggle }) => {
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://dept-store-backend.vercel.app/api/auth/register', { name: username, email, password });
+      const response = await axios.post('https://dept-store-auth-server.vercel.app/api/auth/register', { name: username, email, password });
       
       // Add a check to ensure response and response.data exist
       if (response && response.data && response.data.message) {
@@ -244,6 +249,10 @@ const LoginSignup = () => {
 
   return (
     <div className="loginsignup-page">
+      <div class="cf-turnstile"
+      data-sitekey="yourSitekey"
+    data-callback="javascriptCallback"
+></div>
       <animated.div className="loginsignup-left" style={leftAnimation}>
         {isSwapped ? <SignupForm onToggle={handleToggle} /> : <LoginForm onToggle={handleToggle} />}
       </animated.div>
