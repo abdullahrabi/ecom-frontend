@@ -9,6 +9,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';  
 import { useNavigate } from 'react-router-dom';
 import { ShopContext } from '../Context/ShopContext';
+import Turnstile from 'react-turnstile'
 // Password Input Component
 const PasswordInput = ({ placeholder, onChange, value, id, name }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -50,7 +51,7 @@ const LoginForm = ({ onToggle }) => {
   const [rememberMe, setRememberMe] = useState(false); // State for Remember Me
   const navigate = useNavigate();
   const { updateToken } = useContext(ShopContext); 
-
+  const [captchaToken, setCaptchaToken] = useState('');
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -66,7 +67,11 @@ const LoginForm = ({ onToggle }) => {
           localStorage.setItem('token', token); // Store token in localStorage
           sessionStorage.setItem('token', token); // Store token in sessionStorage
         }
-  
+        if (!captchaToken) {
+          toast.error("Please complete the CAPTCHA.");
+          return;
+        }
+    
         // Clear password from memory
         setPassword('');
         updateToken(token); // Update context token
@@ -134,6 +139,11 @@ const LoginForm = ({ onToggle }) => {
         <img src={google_icon} alt="Google login" />
         <button type="button" className="google-button">Continue with Google</button>
       </div>
+      <Turnstile
+        sitekey="0x4AAAAAAA8Z9b0ekgrJtt0i"
+        onVerify={setCaptchaToken}
+        className="captcha-container"
+      />
     </form>
   );
 };
@@ -144,6 +154,7 @@ const SignupForm = ({ onToggle }) => {
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const navigate = useNavigate();
+  const [captchaToken, setCaptchaToken] = useState('');
 
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
@@ -166,6 +177,10 @@ const SignupForm = ({ onToggle }) => {
       } else {
         toast.error("An error occurred during signup. Please try again later.");
       }
+    }
+    if (!captchaToken) {
+      toast.error("Please complete the CAPTCHA.");
+      return;
     }
   };
   
@@ -210,6 +225,11 @@ const SignupForm = ({ onToggle }) => {
         <img src={google_icon} alt="Google signup" />
         <button type="button" className="google-button">Continue with Google</button>
       </div>
+      <Turnstile
+        sitekey="0x4AAAAAAA8Z9b0ekgrJtt0i"
+        onVerify={setCaptchaToken}
+        className="captcha-container"
+      />
     </form>
   );
 };
@@ -257,6 +277,7 @@ const LoginSignup = () => {
       <animated.div className="loginsignup-right" style={rightAnimation}>
         <img src={login_icon} alt="Welcome" />
       </animated.div>
+      
     </div>
   );
 };

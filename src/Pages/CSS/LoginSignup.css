@@ -203,3 +203,9 @@ h3 {
   height: 20px;
   width: 20px;
 }
+/* Add to your CSS file */
+.captcha-container {
+  margin: 15px 0;
+  display: flex;
+  justify-content: center;
+}
