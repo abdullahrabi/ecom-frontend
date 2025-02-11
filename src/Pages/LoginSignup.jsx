@@ -249,10 +249,7 @@ const LoginSignup = () => {
 
   return (
     <div className="loginsignup-page">
-      <div class="cf-turnstile"
-      data-sitekey="yourSitekey"
-    data-callback="javascriptCallback"
-></div>
+      
       <animated.div className="loginsignup-left" style={leftAnimation}>
         {isSwapped ? <SignupForm onToggle={handleToggle} /> : <LoginForm onToggle={handleToggle} />}
       </animated.div>
