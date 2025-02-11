@@ -130,6 +130,11 @@ const LoginForm = ({ onToggle }) => {
         <label htmlFor="remember-me">Remember me</label>
         <a href="#">Forgot your password?</a>
       </div>
+      <Turnstile
+        sitekey="0x4AAAAAAA8Z9b0ekgrJtt0i"
+        onVerify={setCaptchaToken}
+        className="captcha-container"
+      />
       <button type="submit" className="login-button">Login</button>
       <button className="toggle-button" onClick={onToggle}>
         Don’t have an account? Sign up here
@@ -139,11 +144,7 @@ const LoginForm = ({ onToggle }) => {
         <img src={google_icon} alt="Google login" />
         <button type="button" className="google-button">Continue with Google</button>
       </div>
-      <Turnstile
-        sitekey="0x4AAAAAAA8Z9b0ekgrJtt0i"
-        onVerify={setCaptchaToken}
-        className="captcha-container"
-      />
+     
     </form>
   );
 };
@@ -216,6 +217,11 @@ const SignupForm = ({ onToggle }) => {
           name="username" // Added name
         />
       </div>
+      <Turnstile
+        sitekey="0x4AAAAAAA8Z9b0ekgrJtt0i"
+        onVerify={setCaptchaToken}
+        className="captcha-container"
+      />
       <button type="submit" className="login-button">Sign Up</button>
       <button className="toggle-button" onClick={onToggle}>
         Already have an account? Login here
@@ -225,11 +231,7 @@ const SignupForm = ({ onToggle }) => {
         <img src={google_icon} alt="Google signup" />
         <button type="button" className="google-button">Continue with Google</button>
       </div>
-      <Turnstile
-        sitekey="0x4AAAAAAA8Z9b0ekgrJtt0i"
-        onVerify={setCaptchaToken}
-        className="captcha-container"
-      />
+     
     </form>
   );
 };
