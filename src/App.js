@@ -10,24 +10,9 @@ import SearchResults from './Pages/SearchResults';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Footer from './Components/Footer/Footer';
-import { useEffect } from 'react';
-import Turnstile from 'react-turnstile'
+import Turnstile from 'react-turnstile';
+
 function App() {
-  useEffect(() => {
-    // Make sure the turnstile script is loaded, then initialize the callback
-    window.onloadTurnstileCallback = function () {
-      Turnstile.render("#myWidget", {
-        sitekey: "0x4AAAAAAA8Z9b0ekgrJtt0i",  // replace with your actual site key
-        callback: function (token) {
-          console.log(`Challenge Success ${token}`);
-        },
-      });
-    };
-
-   
-
-  }, []);  
-
   return (
     <div>
       <ToastContainer />
@@ -50,6 +35,14 @@ function App() {
         </Routes>
 
         <Footer />
+        
+        {/* Cloudflare Turnstile Component */}
+        <Turnstile
+          sitekey="0x4AAAAAAA8Z9b0ekgrJtt0i"
+          onVerify={(token) => console.log(`Challenge Success ${token}`)}
+          id="myWidget"
+          style={{ margin: '20px auto' }}
+        />
       </BrowserRouter>
     </div>
   );
