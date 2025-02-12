@@ -16,8 +16,8 @@ function App() {
   useEffect(() => {
     // Make sure the turnstile script is loaded, then initialize the callback
     window.onloadTurnstileCallback = function () {
-      Turnstile.render("#myWidget", {
-        sitekey: "0x4AAAAAAA8Z9b0ekgrJtt0i",  // replace with your actual site key
+      Turnstile.render('#myWidget', {
+        sitekey: '0x4AAAAAAA8Z9b0ekgrJtt0i',  // replace with your actual site key
         callback: function (token) {
           console.log(`Challenge Success ${token}`);
         },
