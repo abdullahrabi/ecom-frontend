@@ -11,12 +11,12 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Footer from './Components/Footer/Footer';
 import { useEffect } from 'react';
-
+import Turnstile from 'react-turnstile'
 function App() {
   useEffect(() => {
     // Make sure the turnstile script is loaded, then initialize the callback
     window.onloadTurnstileCallback = function () {
-      turnstile.render("myWidget", {
+      Turnstile.render("myWidget", {
         sitekey: "<0x4AAAAAAA8Z9b0ekgrJtt0i>",  // replace with your actual site key
         callback: function (token) {
           console.log(`Challenge Success ${token}`);
