@@ -10,9 +10,24 @@ import SearchResults from './Pages/SearchResults';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Footer from './Components/Footer/Footer';
-import Turnstile from 'react-turnstile';
-
+import { useEffect } from 'react';
+import Turnstile from 'react-turnstile'
 function App() {
+  useEffect(() => {
+    // Make sure the turnstile script is loaded, then initialize the callback
+    window.onloadTurnstileCallback = function () {
+      Turnstile.render("#myWidget", {
+        sitekey: "0x4AAAAAAA8Z9b0ekgrJtt0i",  // replace with your actual site key
+        callback: function (token) {
+          console.log(`Challenge Success ${token}`);
+        },
+      });
+    };
+
+   
+
+  }, []);  
+
   return (
     <div>
       <ToastContainer />
@@ -33,16 +48,6 @@ function App() {
           <Route path='/cart' element={<Cart />} />
           <Route path='/login' element={<LoginSignup />} />
         </Routes>
-
-        {/* Turnstile widget rendered here */}
-        <div id="myWidget">
-          <Turnstile
-            siteKey="0x4AAAAAAA8Z9b0ekgrJtt0i" // Replace with your actual site key
-            onSuccess={(token) => {
-              console.log(`Challenge Success ${token}`);
-            }}
-          />
-        </div>
 
         <Footer />
       </BrowserRouter>
