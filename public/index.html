@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-import Turnstile from 'react-turnstile'
+
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -21,27 +21,18 @@ import Turnstile from 'react-turnstile'
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
     <title>Departmental Store</title>
 
-    <!-- Cloudflare Turnstile script -->
+    
     <script
       src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback"
       defer
     ></script>
-    <script>
-      // Make sure the turnstile script is loaded, then initialize the callback
-      window.onloadTurnstileCallback = function () {
-        Turnstile.render("myWidget", {
-          sitekey: "<0x4AAAAAAA8Z9b0ekgrJtt0i>",  // replace with your actual site key
-          callback: function (token) {
-            console.log(`Challenge Success ${token}`);
-            setTimeout(() => {
-              // Add any necessary code after the challenge is completed
-            }, 2000);
-          },
-        });
-      };
-    </script>
+    
   </head>
   <body>
+    <script>
+      // Function to handle Captcha Success
+    </script>
+    <div class="container">...</div>
     <!-- This is where the Turnstile widget will be rendered -->
     <div id="myWidget"></div>
 
