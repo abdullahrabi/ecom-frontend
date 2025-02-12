@@ -26,14 +26,6 @@ import Turnstile from 'react-turnstile'
       src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback"
       defer
     ></script>
-  </head>
-  <body>
-    <!-- This is where the Turnstile widget will be rendered -->
-    <div id="myWidget"></div>
-
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-
     <script>
       // Make sure the turnstile script is loaded, then initialize the callback
       window.onloadTurnstileCallback = function () {
@@ -48,5 +40,14 @@ import Turnstile from 'react-turnstile'
         });
       };
     </script>
+  </head>
+  <body>
+    <!-- This is where the Turnstile widget will be rendered -->
+    <div id="myWidget"></div>
+
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+
+   
   </body>
 </html>
