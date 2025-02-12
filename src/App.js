@@ -10,8 +10,31 @@ import SearchResults from './Pages/SearchResults';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Footer from './Components/Footer/Footer';
+import { useEffect } from 'react';
 
 function App() {
+  useEffect(() => {
+    // Make sure the turnstile script is loaded, then initialize the callback
+    window.onloadTurnstileCallback = function () {
+      turnstile.render("myWidget", {
+        sitekey: "<0x4AAAAAAA8Z9b0ekgrJtt0i>",  // replace with your actual site key
+        callback: function (token) {
+          console.log(`Challenge Success ${token}`);
+          setTimeout(() => {
+            
+          }, 2000);
+        },
+      });
+    };
+
+    // Optionally, you could load the Turnstile script dynamically here if it's not already included in your HTML
+    // For example:
+    // const script = document.createElement("script");
+    // script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+    // document.body.appendChild(script);
+
+  }, []);  // empty dependency array to run once when the component mounts
+
   return (
     <div>
       <ToastContainer />
@@ -28,10 +51,7 @@ function App() {
           <Route path='/Fruits_Vegetables' element={<ShopCategory category="Fruits_Vegetables" />} />
           <Route path="/search" element={<SearchResults />} />
 
-          {/* Corrected the routes for productId and cart */}
           <Route path='/product/:productId' element={<Product />} />
-          
-          {/* Cart and login routes should be independent, not nested */}
           <Route path='/cart' element={<Cart />} />
           <Route path='/login' element={<LoginSignup />} />
         </Routes>
