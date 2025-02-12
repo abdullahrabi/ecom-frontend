@@ -1,15 +1,16 @@
-import React, { useState, useEffect,useContext } from 'react';
-import './CSS/LoginSignup.css'; // Your custom CSS
-import { useSpring, animated } from '@react-spring/web'; // React Spring for animations
+import React, { useState, useEffect, useContext, useRef } from 'react';
+import './CSS/LoginSignup.css';
+import { useSpring, animated } from '@react-spring/web';
 import login_icon from '../Components/Assests/Login.jpg';
 import google_icon from '../Components/Assests/google.jpg';
-import eye_icon from '../Components/Assests/eye_icon.png'; // Your custom eye icon
-import eye_off_icon from '../Components/Assests/eye_off_icon.png'; // Your custom eye-off icon
+import eye_icon from '../Components/Assests/eye_icon.png';
+import eye_off_icon from '../Components/Assests/eye_off_icon.png';
 import axios from 'axios';
-import { toast } from 'react-toastify';  
+import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { ShopContext } from '../Context/ShopContext';
-import Turnstile from 'react-turnstile'
+import Turnstile from 'react-turnstile';
+
 // Password Input Component
 const PasswordInput = ({ placeholder, onChange, value, id, name }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -26,9 +27,9 @@ const PasswordInput = ({ placeholder, onChange, value, id, name }) => {
         required
         value={value}
         onChange={onChange}
-        id={id}  // Added id
-        name={name}  // Added name
-        autoComplete="current-password" // Added autoComplete for password
+        id={id}
+        name={name}
+        autoComplete="current-password"
       />
       <button
         type="button"
@@ -48,54 +49,53 @@ const PasswordInput = ({ placeholder, onChange, value, id, name }) => {
 const LoginForm = ({ onToggle }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false); // State for Remember Me
+  const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
-  const { updateToken } = useContext(ShopContext); 
+  const { updateToken } = useContext(ShopContext);
   const [captchaToken, setCaptchaToken] = useState('');
+  const [captchaKey, setCaptchaKey] = useState(Date.now());
+  const turnstileRef = useRef();
+
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await axios.post('https://dept-store-auth-server.vercel.app/api/auth/login', { email, password });
-      
-      // Add a check to ensure response and response.data exist
-      if (response && response.data && response.data.token) {
-        const { token } = response.data;
-        // Store the JWT token in localStorage or sessionStorage based on "Remember Me"
-        if (rememberMe) {
-          localStorage.setItem('token', token); // Store token in localStorage
-        } else {
-          localStorage.setItem('token', token); // Store token in localStorage
-          sessionStorage.setItem('token', token); // Store token in sessionStorage
-        }
-        if (!captchaToken) {
-          toast.error("Please complete the CAPTCHA.");
-          return;
-        }
     
-        // Clear password from memory
-        setPassword('');
-        updateToken(token); // Update context token
+    if (!captchaToken) {
+      toast.error("Please complete the CAPTCHA.");
+      return;
+    }
 
-        toast.success("Login Successfully");
-        
-            // const { getTotalCartAmount } = useContext(ShopContext);
-        
-        navigate('/');  // Redirect to homepage after login
+    try {
+      const response = await axios.post('https://dept-store-auth-server.vercel.app/api/auth/login', { 
+        email, 
+        password,
+        cfTurnstileToken: captchaToken
+      });
+
+      if (response?.data?.token) {
+        const { token } = response.data;
+        if (rememberMe) {
+          localStorage.setItem('token', token);
+        } else {
+          sessionStorage.setItem('token', token);
+        }
+
+        setPassword('');
+        updateToken(token);
+        toast.success("Login Successful");
+        navigate('/');
       } else {
-        // Handle cases where response does not contain the expected data
-        toast.error("Unexpected response from the server. Please try again.");
+        toast.error("Unexpected server response");
       }
     } catch (err) {
-      console.error(err); // Log the error for debugging purposes
-      // Check if error response exists
-      if (err.response && err.response.data && err.response.data.message) {
-        toast.error(err.response.data.message);
-      } else {
-        toast.error("An error occurred during login. Please try again later.");
-      }
+      console.error(err);
+      setCaptchaToken('');
+      setCaptchaKey(Date.now());
+      if (turnstileRef.current) turnstileRef.current.reset();
+      
+      const errorMessage = err.response?.data?.message || "Login failed. Please try again.";
+      toast.error(errorMessage);
     }
   };
-  
 
   return (
     <form className="loginsignup-container" onSubmit={handleLoginSubmit} autoComplete="on">
@@ -107,16 +107,16 @@ const LoginForm = ({ onToggle }) => {
           required 
           value={email} 
           onChange={(e) => setEmail(e.target.value)} 
-          autoComplete="email"  // Enable autofill for email
-          id="login-email" // Added id
-          name="email" // Added name
+          autoComplete="email"
+          id="login-email"
+          name="email"
         />
         <PasswordInput 
           placeholder="Password" 
           value={password} 
           onChange={(e) => setPassword(e.target.value)} 
-          id="login-password" // Added id
-          name="password" // Added name
+          id="login-password"
+          name="password"
         />
       </div>
       <div className="loginsignup-remember">
@@ -124,16 +124,31 @@ const LoginForm = ({ onToggle }) => {
           type="checkbox" 
           checked={rememberMe} 
           onChange={(e) => setRememberMe(e.target.checked)} 
-          id="remember-me" // Added id
-          name="rememberMe" // Added name
+          id="remember-me"
+          name="rememberMe"
         />
         <label htmlFor="remember-me">Remember me</label>
         <a href="#">Forgot your password?</a>
       </div>
       <Turnstile
+        key={captchaKey}
+        ref={turnstileRef}
         sitekey="0x4AAAAAAA8Z9b0ekgrJtt0i"
         onVerify={setCaptchaToken}
+        onError={() => {
+          toast.error("CAPTCHA verification failed");
+          setCaptchaToken('');
+        }}
+        onExpire={() => {
+          toast.warn("CAPTCHA expired. Please verify again.");
+          setCaptchaToken('');
+        }}
         className="captcha-container"
+        action="login"
+        cData={email}
+        retry="auto"
+        retry-interval={3000}
+        execution="execute"
       />
       <button type="submit" className="login-button">Login</button>
       <button className="toggle-button" onClick={onToggle}>
@@ -144,7 +159,6 @@ const LoginForm = ({ onToggle }) => {
         <img src={google_icon} alt="Google login" />
         <button type="button" className="google-button">Continue with Google</button>
       </div>
-     
     </form>
   );
 };
@@ -156,35 +170,41 @@ const SignupForm = ({ onToggle }) => {
   const [username, setUsername] = useState('');
   const navigate = useNavigate();
   const [captchaToken, setCaptchaToken] = useState('');
+  const [captchaKey, setCaptchaKey] = useState(Date.now());
+  const turnstileRef = useRef();
 
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await axios.post('https://dept-store-auth-server.vercel.app/api/auth/register', { name: username, email, password });
-      
-      // Add a check to ensure response and response.data exist
-      if (response && response.data && response.data.message) {
-        toast.success(response.data.message);
-        navigate('/login');  // Redirect to login page after signup
-      } else {
-        // Handle cases where response does not contain the expected data
-        toast.error("Unexpected response from the server. Please try again.");
-      }
-    } catch (err) {
-      console.error(err); // Log the error for debugging purposes
-      // Check if error response exists
-      if (err.response && err.response.data && err.response.data.message) {
-        toast.error(err.response.data.message);
-      } else {
-        toast.error("An error occurred during signup. Please try again later.");
-      }
-    }
+    
     if (!captchaToken) {
       toast.error("Please complete the CAPTCHA.");
       return;
     }
+
+    try {
+      const response = await axios.post('https://dept-store-auth-server.vercel.app/api/auth/register', { 
+        name: username, 
+        email, 
+        password,
+        cfTurnstileToken: captchaToken
+      });
+
+      if (response?.data?.message) {
+        toast.success(response.data.message);
+        navigate('/login');
+      } else {
+        toast.error("Unexpected server response");
+      }
+    } catch (err) {
+      console.error(err);
+      setCaptchaToken('');
+      setCaptchaKey(Date.now());
+      if (turnstileRef.current) turnstileRef.current.reset();
+      
+      const errorMessage = err.response?.data?.message || "Signup failed. Please try again.";
+      toast.error(errorMessage);
+    }
   };
-  
 
   return (
     <form className="loginsignup-container" onSubmit={handleSignupSubmit} autoComplete="on">
@@ -196,16 +216,16 @@ const SignupForm = ({ onToggle }) => {
           required 
           value={email} 
           onChange={(e) => setEmail(e.target.value)} 
-          autoComplete="email"  // Enable autofill for email
-          id="signup-email" // Added id
-          name="email" // Added name
+          autoComplete="email"
+          id="signup-email"
+          name="email"
         />
         <PasswordInput 
           placeholder="Password" 
           value={password} 
           onChange={(e) => setPassword(e.target.value)} 
-          id="signup-password" // Added id
-          name="password" // Added name
+          id="signup-password"
+          name="password"
         />
         <input 
           type="text" 
@@ -213,14 +233,29 @@ const SignupForm = ({ onToggle }) => {
           required 
           value={username} 
           onChange={(e) => setUsername(e.target.value)} 
-          id="signup-username" // Added id
-          name="username" // Added name
+          id="signup-username"
+          name="username"
         />
       </div>
       <Turnstile
+        key={captchaKey}
+        ref={turnstileRef}
         sitekey="0x4AAAAAAA8Z9b0ekgrJtt0i"
         onVerify={setCaptchaToken}
+        onError={() => {
+          toast.error("CAPTCHA verification failed");
+          setCaptchaToken('');
+        }}
+        onExpire={() => {
+          toast.warn("CAPTCHA expired. Please verify again.");
+          setCaptchaToken('');
+        }}
         className="captcha-container"
+        action="signup"
+        cData={email}
+        retry="auto"
+        retry-interval={3000}
+        execution="execute"
       />
       <button type="submit" className="login-button">Sign Up</button>
       <button className="toggle-button" onClick={onToggle}>
@@ -231,7 +266,6 @@ const SignupForm = ({ onToggle }) => {
         <img src={google_icon} alt="Google signup" />
         <button type="button" className="google-button">Continue with Google</button>
       </div>
-     
     </form>
   );
 };
@@ -256,30 +290,23 @@ const LoginSignup = () => {
     config: { tension: 1000, friction: 60 },
   });
 
-  // Clear localStorage on tab close
   useEffect(() => {
     const handleBeforeUnload = () => {
-      localStorage.clear(); // Clears localStorage when the tab is closed
+      localStorage.clear();
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload); // Cleanup on component unmount
-    };
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, []);
 
   return (
     <div className="loginsignup-page">
-      
       <animated.div className="loginsignup-left" style={leftAnimation}>
         {isSwapped ? <SignupForm onToggle={handleToggle} /> : <LoginForm onToggle={handleToggle} />}
       </animated.div>
-
       <animated.div className="loginsignup-right" style={rightAnimation}>
         <img src={login_icon} alt="Welcome" />
       </animated.div>
-      
     </div>
   );
 };
