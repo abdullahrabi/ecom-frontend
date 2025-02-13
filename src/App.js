@@ -11,7 +11,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Footer from './Components/Footer/Footer';
 import { useEffect } from 'react';
-
+import Turnstile from 'react-turnstile';
 function App() {
   
   return (
