@@ -12,25 +12,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
     <title>Departmental Store</title>
-    <style>
-      /* Simple toast styling */
-      .toast {
-        position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background-color: #333;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 5px;
-        opacity: 0;
-        transition: opacity 0.5s ease-in-out;
-        z-index: 9999;
-      }
-      .toast.show {
-        opacity: 1;
-      }
-    </style>
   </head>
   <body>
     
@@ -45,23 +26,7 @@
     <!-- Main App Container (hidden initially) -->
     <div id="root" style="display: none;"></div>
 
-    <!-- Toast Message Container -->
-    <div id="toast" class="toast"></div>
-
     <script>
-      // Function to show a toast message
-      function showToast(message, success = true) {
-        const toast = document.getElementById('toast');
-        toast.textContent = message;
-        toast.style.backgroundColor = success ? 'green' : 'red';
-        toast.classList.add('show');
-
-        // Hide toast after 3 seconds
-        setTimeout(() => {
-          toast.classList.remove('show');
-        }, 3000);
-      }
-
       // CAPTCHA Success Handler
       function onCaptchaSuccess(token) {
         // Simulate a success response (You can replace this with real verification logic)
@@ -72,16 +37,10 @@
           // Hide CAPTCHA and show React app
           document.getElementById('captcha-container').style.display = 'none';
           document.getElementById('root').style.display = 'block';
-          
-          // Show success toast message
-          showToast('Verification successful! Welcome to the app!', true);
         } else {
           // Handle failed verification
           alert('Verification failed. Please refresh and try again.');
           window.location.reload();
-          
-          // Show error toast message
-          showToast('Verification failed. Please try again.', false);
         }
       }
     </script>
