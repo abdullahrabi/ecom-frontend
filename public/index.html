@@ -14,7 +14,6 @@
     <title>Departmental Store</title>
   </head>
   <body>
-    
     <noscript>You need to enable JavaScript to run this app.</noscript>
     
     <!-- CAPTCHA Container -->
@@ -22,37 +21,37 @@
          data-sitekey="0x4AAAAAAA8Z9b0ekgrJtt0i"
          data-callback="onCaptchaSuccess"
          style="margin: 2rem auto; max-width: 300px;"></div>
-    
     <!-- Main App Container (hidden initially) -->
     <div id="root" style="display: none;"></div>
 
     <script>
       // CAPTCHA Success Handler
       function onCaptchaSuccess(token) {
-        // Handle the CAPTCHA verification token (optional)
-        fetch('/verify-captcha', {
+        // Hide CAPTCHA and show React app
+        document.getElementById('captcha-container').style.display = 'none';
+        document.getElementById('root').style.display = 'block';
+        
+        // Optional: Send token to backend for verification
+        fetch('/api/verify-captcha', {
           method: 'POST',
-          body: JSON.stringify({ token }),
           headers: {
             'Content-Type': 'application/json',
           },
+          body: JSON.stringify({ token: token }),
         })
         .then(response => response.json())
         .then(data => {
-          if (data.success) {
-            // Hide CAPTCHA and show React app
-            document.getElementById('captcha-container').style.display = 'none';
-            document.getElementById('root').style.display = 'block';
-          } else {
+          if (!data.success) {
             // Handle failed verification
             alert('Verification failed. Please refresh and try again.');
             window.location.reload();
           }
-        })
-        .catch(error => {
-          console.error('Error verifying CAPTCHA:', error);
-          alert('An error occurred during CAPTCHA verification.');
         });
+      }
+
+      // CAPTCHA Error Handler
+      function onCaptchaError() {
+        alert('Error loading CAPTCHA. Please refresh the page.');
       }
     </script>
   </body>
