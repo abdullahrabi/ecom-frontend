@@ -12,19 +12,26 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
     <title>Departmental Store</title>
+    <!-- Include React Toastify Styles -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/react-toastify@8.0.3/dist/ReactToastify.min.css"
+    />
   </head>
   <body>
-    
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    
+
     <!-- CAPTCHA Container -->
     <div id="captcha-container" class="cf-turnstile" 
          data-sitekey="0x4AAAAAAA8Z9b0ekgrJtt0i"
          data-callback="onCaptchaSuccess"
          style="margin: 2rem auto; max-width: 300px;"></div>
-    
-    <!-- Main App Container (hidden initially) -->
+
+    <!-- Main App Container (Initially Hidden) -->
     <div id="root" style="display: none;"></div>
+
+    <!-- React and App Script -->
+    <script src="%PUBLIC_URL%/js/bundle.js"></script>
 
     <script>
       // CAPTCHA Success Handler
@@ -37,6 +44,10 @@
           // Hide CAPTCHA and show React app
           document.getElementById('captcha-container').style.display = 'none';
           document.getElementById('root').style.display = 'block';
+
+          // Now render the React app (ensure React is loaded)
+          // This should ideally be handled in React itself (ReactDOM.render)
+          window.ReactDOM.render(<YourReactComponent />, document.getElementById('root'));
         } else {
           // Handle failed verification
           alert('Verification failed. Please refresh and try again.');
