@@ -2,24 +2,43 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <link rel="icon" href="%PUBLIC_URL%/logo192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta name="description" content="Web site created using create-react-app" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+
+    <!-- Cloudflare Turnstile CAPTCHA -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
     <title>Departmental Store</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    
-   
-    <div id="root"></div>
 
-   
+    <!-- CAPTCHA Container -->
+    <div id="captcha-container" 
+         class="cf-turnstile" 
+         data-sitekey="0x4AAAAAAA8Z9b0ekgrJtt0i"
+         data-callback="onCaptchaSuccess">
+    </div>
+
+    <!-- React App Container (hidden until CAPTCHA passes) -->
+    <div id="root" style="display: none;"></div>
+
+    <script>
+      // CAPTCHA Success Handler
+      function onCaptchaSuccess(token) {
+        // Hide CAPTCHA and show React app
+        document.getElementById('captcha-container').style.display = 'none';
+        document.getElementById('root').style.display = 'block';
+      }
+    </script>
   </body>
 </html>
