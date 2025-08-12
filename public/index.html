@@ -17,44 +17,9 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     
-    <!-- CAPTCHA Container -->
+   
+    <div id="root"></div>
 
-    <div id="captcha-container" class="cf-turnstile" 
-         data-sitekey="0x4AAAAAAA8Z9b0ekgrJtt0i"
-         data-callback="onCaptchaSuccess"
-         ></div>
-    <!-- Main App Container (hidden initially) -->
-    <div id="root" style="display: none;"></div>
-
-    <script>
-      // CAPTCHA Success Handler
-      function onCaptchaSuccess(token) {
-        // Hide CAPTCHA and show React app
-        document.getElementById('captcha-container').style.display = 'none';
-        document.getElementById('root').style.display = 'block';
-        
-        // Optional: Send token to backend for verification
-        fetch('/api/verify-captcha', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ token: token }),
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (!data.success) {
-            // Handle failed verification
-            alert('Verification failed. Please refresh and try again.');
-            window.location.reload();
-          }
-        });
-      }
-
-      // CAPTCHA Error Handler
-      function onCaptchaError() {
-        alert('Error loading CAPTCHA. Please refresh the page.');
-      }
-    </script>
+   
   </body>
 </html>

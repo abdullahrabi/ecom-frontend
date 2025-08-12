@@ -41,9 +41,12 @@ const SearchResults = () => {
   };
 
   if (loading) {
-    return <p>Loading products...</p>;
-  }
-
+  return (
+    <div className="loader-container">
+      <div className="spinner"></div>
+    </div>
+  );
+}
   if (error) {
     return <p>{error}</p>;
   }
