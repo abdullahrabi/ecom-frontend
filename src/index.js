@@ -4,20 +4,15 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import ShopContextProvider from './Context/ShopContext';
-import  CaptchaContext  from './Context/CaptchaContext';
+import CaptchaProvider from './Context/CaptchaContext';  // ✅ use Provider
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-
-    <CaptchaContext>
+  <CaptchaProvider>
     <ShopContextProvider>
-        <App />
+      <App />
     </ShopContextProvider>
-  </CaptchaContext>
-  
+  </CaptchaProvider>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
