@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+ import React, { useState, useEffect, useContext } from 'react';
 import './CSS/LoginSignup.css';
 import { useSpring, animated } from '@react-spring/web';
 import login_icon from '../Components/Assests/Login.jpg';
@@ -14,6 +14,7 @@ import CaptchaModal from '../Components/CaptchaModel/CaptchaModel.jsx'
 // Password Input Component
 const PasswordInput = ({ placeholder, onChange, value, id, name }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
+  
 
   return (
     <div className="password-input-container" style={{ position: 'relative' }}>
