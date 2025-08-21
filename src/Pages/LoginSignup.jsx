@@ -1,22 +1,19 @@
-import React, { useState, useEffect,useContext } from 'react';
-import './CSS/LoginSignup.css'; // Your custom CSS
-import { useSpring, animated } from '@react-spring/web'; // React Spring for animations
+import React, { useState, useEffect, useContext } from 'react';
+import './CSS/LoginSignup.css';
+import { useSpring, animated } from '@react-spring/web';
 import login_icon from '../Components/Assests/Login.jpg';
 import google_icon from '../Components/Assests/google.jpg';
-import eye_icon from '../Components/Assests/eye_icon.png'; // Your custom eye icon
-import eye_off_icon from '../Components/Assests/eye_off_icon.png'; // Your custom eye-off icon
+import eye_icon from '../Components/Assests/eye_icon.png';
+import eye_off_icon from '../Components/Assests/eye_off_icon.png';
 import axios from 'axios';
-import { toast } from 'react-toastify';  
+import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { ShopContext } from '../Context/ShopContext';
-import Turnstile from 'react-turnstile'
+import CaptchaModal from '../Components/CaptchaModal'; // import modal
+
 // Password Input Component
 const PasswordInput = ({ placeholder, onChange, value, id, name }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
-
-  const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
-  };
 
   return (
     <div className="password-input-container" style={{ position: 'relative' }}>
@@ -26,13 +23,13 @@ const PasswordInput = ({ placeholder, onChange, value, id, name }) => {
         required
         value={value}
         onChange={onChange}
-        id={id}  // Added id
-        name={name}  // Added name
-        autoComplete="current-password" // Added autoComplete for password
+        id={id}
+        name={name}
+        autoComplete="current-password"
       />
       <button
         type="button"
-        onClick={togglePasswordVisibility}
+        onClick={() => setPasswordVisible(!passwordVisible)}
         className="eye-icon-button"
       >
         <img 
@@ -48,104 +45,100 @@ const PasswordInput = ({ placeholder, onChange, value, id, name }) => {
 const LoginForm = ({ onToggle }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false); // State for Remember Me
+  const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
-  const { updateToken } = useContext(ShopContext); 
-  const [captchaToken, setCaptchaToken] = useState('');
-  const handleLoginSubmit = async (e) => {
+  const { updateToken } = useContext(ShopContext);
+  const [showCaptcha, setShowCaptcha] = useState(false);
+
+  const handleLoginSubmit = (e) => {
     e.preventDefault();
+    setShowCaptcha(true); // Show captcha modal before login request
+  };
+
+  const handleCaptchaVerify = async (captchaToken) => {
     try {
-      const response = await axios.post('https://dept-store-auth-server.vercel.app/api/auth/login', { email, password });
-      
-      // Add a check to ensure response and response.data exist
+      const response = await axios.post(
+        'https://dept-store-auth-server.vercel.app/api/auth/login',
+        { email, password }
+      );
+
       if (response && response.data && response.data.token) {
         const { token } = response.data;
-        // Store the JWT token in localStorage or sessionStorage based on "Remember Me"
-        if (rememberMe) {
-          localStorage.setItem('token', token); // Store token in localStorage
-        } else {
-          localStorage.setItem('token', token); // Store token in localStorage
-          sessionStorage.setItem('token', token); // Store token in sessionStorage
-        }
-        if (!captchaToken) {
-          toast.error("Please complete the CAPTCHA.");
-          return;
-        }
-    
-        // Clear password from memory
-        setPassword('');
-        updateToken(token); // Update context token
 
+        if (rememberMe) {
+          localStorage.setItem('token', token);
+        } else {
+          sessionStorage.setItem('token', token);
+        }
+
+        setPassword('');
+        updateToken(token);
         toast.success("Login Successfully");
-        
-            // const { getTotalCartAmount } = useContext(ShopContext);
-        
-        navigate('/');  // Redirect to homepage after login
+        navigate('/');
       } else {
-        // Handle cases where response does not contain the expected data
         toast.error("Unexpected response from the server. Please try again.");
       }
     } catch (err) {
-      console.error(err); // Log the error for debugging purposes
-      // Check if error response exists
-      if (err.response && err.response.data && err.response.data.message) {
+      if (err.response?.data?.message) {
         toast.error(err.response.data.message);
       } else {
         toast.error("An error occurred during login. Please try again later.");
       }
     }
   };
-  
 
   return (
-    <form className="loginsignup-container" onSubmit={handleLoginSubmit} autoComplete="on">
-      <h1>Login</h1>
-      <div className="loginsignup-fields">
-        <input 
-          type="email" 
-          placeholder="Email" 
-          required 
-          value={email} 
-          onChange={(e) => setEmail(e.target.value)} 
-          autoComplete="email"  // Enable autofill for email
-          id="login-email" // Added id
-          name="email" // Added name
+    <>
+      <form className="loginsignup-container" onSubmit={handleLoginSubmit} autoComplete="on">
+        <h1>Login</h1>
+        <div className="loginsignup-fields">
+          <input 
+            type="email" 
+            placeholder="Email" 
+            required 
+            value={email} 
+            onChange={(e) => setEmail(e.target.value)} 
+            autoComplete="email"
+            id="login-email"
+            name="email"
+          />
+          <PasswordInput 
+            placeholder="Password" 
+            value={password} 
+            onChange={(e) => setPassword(e.target.value)} 
+            id="login-password"
+            name="password"
+          />
+        </div>
+        <div className="loginsignup-remember">
+          <input 
+            type="checkbox" 
+            checked={rememberMe} 
+            onChange={(e) => setRememberMe(e.target.checked)} 
+            id="remember-me"
+            name="rememberMe"
+          />
+          <label htmlFor="remember-me">Remember me</label>
+          <a href="#">Forgot your password?</a>
+        </div>
+        <button type="submit" className="login-button">Login</button>
+        <button className="toggle-button" onClick={onToggle}>
+          Don’t have an account? Sign up here
+        </button>
+        <h3>OR</h3>
+        <div className="google-form">
+          <img src={google_icon} alt="Google login" />
+          <button type="button" className="google-button">Continue with Google</button>
+        </div>
+      </form>
+
+      {showCaptcha && (
+        <CaptchaModal
+          onVerify={(token) => handleCaptchaVerify(token)}
+          onClose={() => setShowCaptcha(false)}
         />
-        <PasswordInput 
-          placeholder="Password" 
-          value={password} 
-          onChange={(e) => setPassword(e.target.value)} 
-          id="login-password" // Added id
-          name="password" // Added name
-        />
-      </div>
-      <div className="loginsignup-remember">
-        <input 
-          type="checkbox" 
-          checked={rememberMe} 
-          onChange={(e) => setRememberMe(e.target.checked)} 
-          id="remember-me" // Added id
-          name="rememberMe" // Added name
-        />
-        <label htmlFor="remember-me">Remember me</label>
-        <a href="#">Forgot your password?</a>
-      </div>
-      <Turnstile
-        sitekey="0x4AAAAAAA8Z9b0ekgrJtt0i"
-        onVerify={setCaptchaToken}
-        className="captcha-container"
-      />
-      <button type="submit" className="login-button">Login</button>
-      <button className="toggle-button" onClick={onToggle}>
-        Don’t have an account? Sign up here
-      </button>
-      <h3>OR</h3>
-      <div className="google-form">
-        <img src={google_icon} alt="Google login" />
-        <button type="button" className="google-button">Continue with Google</button>
-      </div>
-     
-    </form>
+      )}
+    </>
   );
 };
 
@@ -155,84 +148,85 @@ const SignupForm = ({ onToggle }) => {
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const navigate = useNavigate();
-  const [captchaToken, setCaptchaToken] = useState('');
+  const [showCaptcha, setShowCaptcha] = useState(false);
 
-  const handleSignupSubmit = async (e) => {
+  const handleSignupSubmit = (e) => {
     e.preventDefault();
+    setShowCaptcha(true); // Show captcha before signup request
+  };
+
+  const handleCaptchaVerify = async (captchaToken) => {
     try {
-      const response = await axios.post('https://dept-store-auth-server.vercel.app/api/auth/register', { name: username, email, password });
-      
-      // Add a check to ensure response and response.data exist
+      const response = await axios.post(
+        'https://dept-store-auth-server.vercel.app/api/auth/register',
+        { name: username, email, password }
+      );
+
       if (response && response.data && response.data.message) {
         toast.success(response.data.message);
-        navigate('/login');  // Redirect to login page after signup
+        navigate('/login');
       } else {
-        // Handle cases where response does not contain the expected data
         toast.error("Unexpected response from the server. Please try again.");
       }
     } catch (err) {
-      console.error(err); // Log the error for debugging purposes
-      // Check if error response exists
-      if (err.response && err.response.data && err.response.data.message) {
+      if (err.response?.data?.message) {
         toast.error(err.response.data.message);
       } else {
         toast.error("An error occurred during signup. Please try again later.");
       }
     }
-    if (!captchaToken) {
-      toast.error("Please complete the CAPTCHA.");
-      return;
-    }
   };
-  
 
   return (
-    <form className="loginsignup-container" onSubmit={handleSignupSubmit} autoComplete="on">
-      <h1>Sign Up</h1>
-      <div className="loginsignup-fields">
-        <input 
-          type="email" 
-          placeholder="Email" 
-          required 
-          value={email} 
-          onChange={(e) => setEmail(e.target.value)} 
-          autoComplete="email"  // Enable autofill for email
-          id="signup-email" // Added id
-          name="email" // Added name
+    <>
+      <form className="loginsignup-container" onSubmit={handleSignupSubmit} autoComplete="on">
+        <h1>Sign Up</h1>
+        <div className="loginsignup-fields">
+          <input 
+            type="email" 
+            placeholder="Email" 
+            required 
+            value={email} 
+            onChange={(e) => setEmail(e.target.value)} 
+            autoComplete="email"
+            id="signup-email"
+            name="email"
+          />
+          <PasswordInput 
+            placeholder="Password" 
+            value={password} 
+            onChange={(e) => setPassword(e.target.value)} 
+            id="signup-password"
+            name="password"
+          />
+          <input 
+            type="text" 
+            placeholder="Username" 
+            required 
+            value={username} 
+            onChange={(e) => setUsername(e.target.value)} 
+            id="signup-username"
+            name="username"
+          />
+        </div>
+        <button type="submit" className="login-button">Sign Up</button>
+        <button className="toggle-button" onClick={onToggle}>
+          Already have an account? Login here
+        </button>
+        <h3>OR</h3>
+        <div className="google-form">
+          <img src={google_icon} alt="Google signup" />
+          <button type="button" className="google-button">Continue with Google</button>
+        </div>
+      </form>
+
+      {showCaptcha && (
+        <CaptchaModal
+          onVerify={(token) => handleCaptchaVerify(token)}
+          onClose={() => setShowCaptcha(false)}
         />
-        <PasswordInput 
-          placeholder="Password" 
-          value={password} 
-          onChange={(e) => setPassword(e.target.value)} 
-          id="signup-password" // Added id
-          name="password" // Added name
-        />
-        <input 
-          type="text" 
-          placeholder="Username" 
-          required 
-          value={username} 
-          onChange={(e) => setUsername(e.target.value)} 
-          id="signup-username" // Added id
-          name="username" // Added name
-        />
-      </div>
-      <Turnstile
-        sitekey="0x4AAAAAAA8Z9b0ekgrJtt0i"
-        onVerify={setCaptchaToken}
-        className="captcha-container"
-      />
-      <button type="submit" className="login-button">Sign Up</button>
-      <button className="toggle-button" onClick={onToggle}>
-        Already have an account? Login here
-      </button>
-      <h3>OR</h3>
-      <div className="google-form">
-        <img src={google_icon} alt="Google signup" />
-        <button type="button" className="google-button">Continue with Google</button>
-      </div>
-     
-    </form>
+      )}
+    </>
   );
 };
 
@@ -240,9 +234,7 @@ const SignupForm = ({ onToggle }) => {
 const LoginSignup = () => {
   const [isSwapped, setIsSwapped] = useState(false);
 
-  const handleToggle = () => {
-    setIsSwapped(!isSwapped);
-  };
+  const handleToggle = () => setIsSwapped(!isSwapped);
 
   const leftAnimation = useSpring({
     transform: isSwapped ? 'translateX(100%)' : 'translateX(0%)',
@@ -256,22 +248,14 @@ const LoginSignup = () => {
     config: { tension: 1000, friction: 60 },
   });
 
-  // Clear localStorage on tab close
   useEffect(() => {
-    const handleBeforeUnload = () => {
-      localStorage.clear(); // Clears localStorage when the tab is closed
-    };
-
+    const handleBeforeUnload = () => localStorage.clear();
     window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload); // Cleanup on component unmount
-    };
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, []);
 
   return (
     <div className="loginsignup-page">
-      
       <animated.div className="loginsignup-left" style={leftAnimation}>
         {isSwapped ? <SignupForm onToggle={handleToggle} /> : <LoginForm onToggle={handleToggle} />}
       </animated.div>
@@ -279,7 +263,6 @@ const LoginSignup = () => {
       <animated.div className="loginsignup-right" style={rightAnimation}>
         <img src={login_icon} alt="Welcome" />
       </animated.div>
-      
     </div>
   );
 };

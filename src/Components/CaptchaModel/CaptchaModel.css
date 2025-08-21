@@ -1,0 +1,18 @@
+.captcha-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(6px);
+}
+
+.captcha-modal-content {
+  background: transparent;
+  padding: 24px;
+  border-radius: 16px;
+  max-width: 400px;
+  text-align: center;
+}
