@@ -1,23 +1,28 @@
-/* Captcha overlay background */
-.captcha-overlay {
+/* Overlay background */
+.captcha-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.5); /* blur/overlay effect */
-  backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999; /* ensure it overlaps everything */
+  z-index: 9999; /* super high */
+  backdrop-filter: blur(6px);
 }
 
-/* Captcha box itself */
-.captcha-box {
+/* Captcha box */
+.captcha-modal-content {
   background: #fff;
-  padding: 20px;
+  padding: 1rem;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-  z-index: 10000;
+  max-width: 350px;
+  width: auto;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
