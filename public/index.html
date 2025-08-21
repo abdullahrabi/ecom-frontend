@@ -25,8 +25,9 @@
     <!-- CAPTCHA Container -->
     <div id="captcha-container" 
          class="cf-turnstile" 
-         data-sitekey="0x4AAAAAAA8Z9b0ekgrJtt0i"
-         data-callback="onCaptchaSuccess">
+          data-sitekey="%VITE_TURNSTILE_SITE_KEY%"
+         data-callback="onCaptchaSuccess"
+         data-theme="dark">
     </div>
 
     <!-- React App Container (hidden until CAPTCHA passes) -->
