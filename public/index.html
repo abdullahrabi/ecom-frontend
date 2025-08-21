@@ -21,6 +21,27 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+
+    <!-- CAPTCHA Container -->
+    <div id="captcha-container"
+         class="cf-turnstile"
+         data-callback="onCaptchaSuccess"
+         data-theme="dark">
+    </div>
+
+    <!-- React App Container (hidden until CAPTCHA passes) -->
+    <div id="root" style="display: none;"></div>
+
+    <script type="module">
+      // Inject env key into captcha element
+      const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
+      document.getElementById("captcha-container").setAttribute("data-sitekey", siteKey);
+
+      // CAPTCHA Success Handler
+      window.onCaptchaSuccess = function(token) {
+        document.getElementById('captcha-container').style.display = 'none';
+        document.getElementById('root').style.display = 'block';
+      };
+    </script>
   </body>
 </html>
