@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import Turnstile from "react-turnstile";
-import "./CaptchaModal";
+import './CaptchaModel';
 
 const CaptchaModal = ({ onVerify, onClose }) => {
   // disable background scroll
