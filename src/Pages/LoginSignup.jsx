@@ -9,9 +9,9 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { ShopContext } from '../Context/ShopContext';
-import CaptchaModal from '../Components/CaptchaModel/CaptchaModel.jsx'
+import CaptchaModal from '../Components/CaptchaModel/CaptchaModel.jsx';
 
-// ---------------- Password Input ----------------
+// -------- Password Input --------
 const PasswordInput = ({ placeholder, onChange, value, id, name }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
@@ -41,199 +41,171 @@ const PasswordInput = ({ placeholder, onChange, value, id, name }) => {
   );
 };
 
-// ---------------- Login Form ----------------
-const LoginForm = ({ onToggle, showCaptcha, setShowCaptcha }) => {
+// -------- Login Form --------
+const LoginForm = ({ onToggle, onSubmit }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
-  const navigate = useNavigate();
-  const { updateToken } = useContext(ShopContext);
 
-  const handleLoginSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setShowCaptcha(true); // ✅ open captcha
-  };
-
-  const handleCaptchaVerify = async (captchaToken) => {
-    try {
-      const response = await axios.post(
-        'https://dept-store-auth-server.vercel.app/api/auth/login',
-        { email, password }
-      );
-
-      if (response && response.data && response.data.token) {
-        const { token } = response.data;
-
-        if (rememberMe) {
-          localStorage.setItem('token', token);
-        } else {
-          sessionStorage.setItem('token', token);
-        }
-
-        setPassword('');
-        updateToken(token);
-        toast.success("Login Successfully");
-        navigate('/');
-      } else {
-        toast.error("Unexpected response from the server. Please try again.");
-      }
-    } catch (err) {
-      if (err.response?.data?.message) {
-        toast.error(err.response.data.message);
-      } else {
-        toast.error("An error occurred during login. Please try again later.");
-      }
-    }
+    onSubmit("login", { email, password, rememberMe });
   };
 
   return (
-    <>
-      <form className="loginsignup-container" onSubmit={handleLoginSubmit} autoComplete="on">
-        <h1>Login</h1>
-        <div className="loginsignup-fields">
-          <input 
-            type="email" 
-            placeholder="Email" 
-            required 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
-            autoComplete="email"
-            id="login-email"
-            name="email"
-          />
-          <PasswordInput 
-            placeholder="Password" 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
-            id="login-password"
-            name="password"
-          />
-        </div>
-        <div className="loginsignup-remember">
-          <input 
-            type="checkbox" 
-            checked={rememberMe} 
-            onChange={(e) => setRememberMe(e.target.checked)} 
-            id="remember-me"
-            name="rememberMe"
-          />
-          <label htmlFor="remember-me">Remember me</label>
-          <a href="#">Forgot your password?</a>
-        </div>
-        <button type="submit" className="login-button">Login</button>
-        <button className="toggle-button" onClick={onToggle}>
-          Don’t have an account? Sign up here
-        </button>
-        <h3>OR</h3>
-        <div className="google-form">
-          <img src={google_icon} alt="Google login" />
-          <button type="button" className="google-button">Continue with Google</button>
-        </div>
-      </form>
-
-      {showCaptcha && (
-        <CaptchaModal
-          onVerify={(token) => handleCaptchaVerify(token)}
-          onClose={() => setShowCaptcha(false)}
+    <form className="loginsignup-container" onSubmit={handleSubmit} autoComplete="on">
+      <h1>Login</h1>
+      <div className="loginsignup-fields">
+        <input 
+          type="email" 
+          placeholder="Email" 
+          required 
+          value={email} 
+          onChange={(e) => setEmail(e.target.value)} 
+          autoComplete="email"
+          id="login-email"
+          name="email"
         />
-      )}
-    </>
+        <PasswordInput 
+          placeholder="Password" 
+          value={password} 
+          onChange={(e) => setPassword(e.target.value)} 
+          id="login-password"
+          name="password"
+        />
+      </div>
+      <div className="loginsignup-remember">
+        <input 
+          type="checkbox" 
+          checked={rememberMe} 
+          onChange={(e) => setRememberMe(e.target.checked)} 
+          id="remember-me"
+          name="rememberMe"
+        />
+        <label htmlFor="remember-me">Remember me</label>
+        <a href="#">Forgot your password?</a>
+      </div>
+      <button type="submit" className="login-button">Login</button>
+      <button type="button" className="toggle-button" onClick={onToggle}>
+        Don’t have an account? Sign up here
+      </button>
+      <h3>OR</h3>
+      <div className="google-form">
+        <img src={google_icon} alt="Google login" />
+        <button type="button" className="google-button">Continue with Google</button>
+      </div>
+    </form>
   );
 };
 
-// ---------------- Signup Form ----------------
-const SignupForm = ({ onToggle, showCaptcha, setShowCaptcha }) => {
+// -------- Signup Form --------
+const SignupForm = ({ onToggle, onSubmit }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
-  const navigate = useNavigate();
 
-  const handleSignupSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setShowCaptcha(true); // ✅ open captcha
-  };
-
-  const handleCaptchaVerify = async (captchaToken) => {
-    try {
-      const response = await axios.post(
-        'https://dept-store-auth-server.vercel.app/api/auth/register',
-        { name: username, email, password }
-      );
-
-      if (response && response.data && response.data.message) {
-        toast.success(response.data.message);
-        navigate('/login');
-      } else {
-        toast.error("Unexpected response from the server. Please try again.");
-      }
-    } catch (err) {
-      if (err.response?.data?.message) {
-        toast.error(err.response.data.message);
-      } else {
-        toast.error("An error occurred during signup. Please try again later.");
-      }
-    }
+    onSubmit("signup", { email, password, username });
   };
 
   return (
-    <>
-      <form className="loginsignup-container" onSubmit={handleSignupSubmit} autoComplete="on">
-        <h1>Sign Up</h1>
-        <div className="loginsignup-fields">
-          <input 
-            type="email" 
-            placeholder="Email" 
-            required 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
-            autoComplete="email"
-            id="signup-email"
-            name="email"
-          />
-          <PasswordInput 
-            placeholder="Password" 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
-            id="signup-password"
-            name="password"
-          />
-          <input 
-            type="text" 
-            placeholder="Username" 
-            required 
-            value={username} 
-            onChange={(e) => setUsername(e.target.value)} 
-            id="signup-username"
-            name="username"
-          />
-        </div>
-        <button type="submit" className="login-button">Sign Up</button>
-        <button className="toggle-button" onClick={onToggle}>
-          Already have an account? Login here
-        </button>
-        <h3>OR</h3>
-        <div className="google-form">
-          <img src={google_icon} alt="Google signup" />
-          <button type="button" className="google-button">Continue with Google</button>
-        </div>
-      </form>
-
-      {showCaptcha && (
-        <CaptchaModal
-          onVerify={(token) => handleCaptchaVerify(token)}
-          onClose={() => setShowCaptcha(false)}
+    <form className="loginsignup-container" onSubmit={handleSubmit} autoComplete="on">
+      <h1>Sign Up</h1>
+      <div className="loginsignup-fields">
+        <input 
+          type="email" 
+          placeholder="Email" 
+          required 
+          value={email} 
+          onChange={(e) => setEmail(e.target.value)} 
+          autoComplete="email"
+          id="signup-email"
+          name="email"
         />
-      )}
-    </>
+        <PasswordInput 
+          placeholder="Password" 
+          value={password} 
+          onChange={(e) => setPassword(e.target.value)} 
+          id="signup-password"
+          name="password"
+        />
+        <input 
+          type="text" 
+          placeholder="Username" 
+          required 
+          value={username} 
+          onChange={(e) => setUsername(e.target.value)} 
+          id="signup-username"
+          name="username"
+        />
+      </div>
+      <button type="submit" className="login-button">Sign Up</button>
+      <button type="button" className="toggle-button" onClick={onToggle}>
+        Already have an account? Login here
+      </button>
+      <h3>OR</h3>
+      <div className="google-form">
+        <img src={google_icon} alt="Google signup" />
+        <button type="button" className="google-button">Continue with Google</button>
+      </div>
+    </form>
   );
 };
 
-// ---------------- Main Component ----------------
+// -------- Main LoginSignup --------
 const LoginSignup = () => {
   const [isSwapped, setIsSwapped] = useState(false);
-  const [showCaptcha, setShowCaptcha] = useState(false); // ✅ Global captcha state
+  const [showCaptcha, setShowCaptcha] = useState(false);
+  const [pendingAction, setPendingAction] = useState(null); // { type, data }
+  const { updateToken } = useContext(ShopContext);
+  const navigate = useNavigate();
 
   const handleToggle = () => setIsSwapped(!isSwapped);
+
+  const handleFormSubmit = (type, data) => {
+    setPendingAction({ type, data });
+    setShowCaptcha(true);
+  };
+
+  const handleCaptchaVerify = async (captchaToken) => {
+    if (!pendingAction) return;
+
+    try {
+      if (pendingAction.type === "login") {
+        const { email, password, rememberMe } = pendingAction.data;
+        const res = await axios.post(
+          'https://dept-store-auth-server.vercel.app/api/auth/login',
+          { email, password }
+        );
+        if (res.data?.token) {
+          if (rememberMe) {
+            localStorage.setItem('token', res.data.token);
+          } else {
+            sessionStorage.setItem('token', res.data.token);
+          }
+          updateToken(res.data.token);
+          toast.success("Login Successfully");
+          navigate('/');
+        }
+      } else if (pendingAction.type === "signup") {
+        const { email, password, username } = pendingAction.data;
+        const res = await axios.post(
+          'https://dept-store-auth-server.vercel.app/api/auth/register',
+          { name: username, email, password }
+        );
+        if (res.data?.message) {
+          toast.success(res.data.message);
+          navigate('/login');
+        }
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Something went wrong");
+    } finally {
+      setPendingAction(null);
+      setShowCaptcha(false);
+    }
+  };
 
   const leftAnimation = useSpring({
     transform: isSwapped ? 'translateX(100%)' : 'translateX(0%)',
@@ -257,23 +229,22 @@ const LoginSignup = () => {
     <div className="loginsignup-page">
       <animated.div className="loginsignup-left" style={leftAnimation}>
         {isSwapped ? (
-          <SignupForm 
-            onToggle={handleToggle} 
-            showCaptcha={showCaptcha} 
-            setShowCaptcha={setShowCaptcha} 
-          />
+          <SignupForm onToggle={handleToggle} onSubmit={handleFormSubmit} />
         ) : (
-          <LoginForm 
-            onToggle={handleToggle} 
-            showCaptcha={showCaptcha} 
-            setShowCaptcha={setShowCaptcha} 
-          />
+          <LoginForm onToggle={handleToggle} onSubmit={handleFormSubmit} />
         )}
       </animated.div>
 
       <animated.div className="loginsignup-right" style={rightAnimation}>
         <img src={login_icon} alt="Welcome" />
       </animated.div>
+
+      {showCaptcha && (
+        <CaptchaModal
+          onVerify={handleCaptchaVerify}
+          onClose={() => setShowCaptcha(false)}
+        />
+      )}
     </div>
   );
 };
