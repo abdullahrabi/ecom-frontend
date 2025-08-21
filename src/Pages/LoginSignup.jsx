@@ -9,7 +9,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { ShopContext } from '../Context/ShopContext';
-import CaptchaModal from '../Components/CaptchaModel/CaptchaModel'
+import CaptchaModal from '../Components/CaptchaModel/CaptchaModel.jsx'
 
 // Password Input Component
 const PasswordInput = ({ placeholder, onChange, value, id, name }) => {
