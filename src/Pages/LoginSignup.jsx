@@ -1,4 +1,4 @@
- import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import './CSS/LoginSignup.css';
 import { useSpring, animated } from '@react-spring/web';
 import login_icon from '../Components/Assests/Login.jpg';
@@ -11,10 +11,9 @@ import { useNavigate } from 'react-router-dom';
 import { ShopContext } from '../Context/ShopContext';
 import CaptchaModal from '../Components/CaptchaModel/CaptchaModel.jsx'
 
-// Password Input Component
+// ---------------- Password Input ----------------
 const PasswordInput = ({ placeholder, onChange, value, id, name }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [showCaptcha, setShowCaptcha] = useState(false);
 
   return (
     <div className="password-input-container" style={{ position: 'relative' }}>
@@ -42,18 +41,17 @@ const PasswordInput = ({ placeholder, onChange, value, id, name }) => {
   );
 };
 
-// Login Form Component
-const LoginForm = ({ onToggle }) => {
+// ---------------- Login Form ----------------
+const LoginForm = ({ onToggle, showCaptcha, setShowCaptcha }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
   const { updateToken } = useContext(ShopContext);
-  
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
-    setShowCaptcha(true); // Show captcha modal before login request
+    setShowCaptcha(true); // ✅ open captcha
   };
 
   const handleCaptchaVerify = async (captchaToken) => {
@@ -143,17 +141,16 @@ const LoginForm = ({ onToggle }) => {
   );
 };
 
-// Signup Form Component
-const SignupForm = ({ onToggle }) => {
+// ---------------- Signup Form ----------------
+const SignupForm = ({ onToggle, showCaptcha, setShowCaptcha }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const navigate = useNavigate();
-  
 
   const handleSignupSubmit = (e) => {
     e.preventDefault();
-    setShowCaptcha(true); // Show captcha before signup request
+    setShowCaptcha(true); // ✅ open captcha
   };
 
   const handleCaptchaVerify = async (captchaToken) => {
@@ -231,9 +228,10 @@ const SignupForm = ({ onToggle }) => {
   );
 };
 
-// Main LoginSignup Component
+// ---------------- Main Component ----------------
 const LoginSignup = () => {
   const [isSwapped, setIsSwapped] = useState(false);
+  const [showCaptcha, setShowCaptcha] = useState(false); // ✅ Global captcha state
 
   const handleToggle = () => setIsSwapped(!isSwapped);
 
@@ -258,7 +256,19 @@ const LoginSignup = () => {
   return (
     <div className="loginsignup-page">
       <animated.div className="loginsignup-left" style={leftAnimation}>
-        {isSwapped ? <SignupForm onToggle={handleToggle} /> : <LoginForm onToggle={handleToggle} />}
+        {isSwapped ? (
+          <SignupForm 
+            onToggle={handleToggle} 
+            showCaptcha={showCaptcha} 
+            setShowCaptcha={setShowCaptcha} 
+          />
+        ) : (
+          <LoginForm 
+            onToggle={handleToggle} 
+            showCaptcha={showCaptcha} 
+            setShowCaptcha={setShowCaptcha} 
+          />
+        )}
       </animated.div>
 
       <animated.div className="loginsignup-right" style={rightAnimation}>
