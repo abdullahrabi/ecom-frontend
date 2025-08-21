@@ -1,7 +1,6 @@
 /* Background blur for whole login/signup page */
 .loginsignup-page {
   display: flex;
-  position: fixed;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
@@ -11,7 +10,6 @@
 /* Captcha alignment */
 .captcha-container {
   display: flex;
-  position: fixed;
   justify-content: center;
   margin: 15px 0;
   transform: scale(0.95); /* resize slightly smaller */
