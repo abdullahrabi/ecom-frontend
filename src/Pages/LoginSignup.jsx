@@ -14,7 +14,7 @@ import CaptchaModal from '../Components/CaptchaModel/CaptchaModel.jsx'
 // Password Input Component
 const PasswordInput = ({ placeholder, onChange, value, id, name }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
-  
+  const [showCaptcha, setShowCaptcha] = useState(false);
 
   return (
     <div className="password-input-container" style={{ position: 'relative' }}>
@@ -49,7 +49,7 @@ const LoginForm = ({ onToggle }) => {
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
   const { updateToken } = useContext(ShopContext);
-  const [showCaptcha, setShowCaptcha] = useState(false);
+  
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
@@ -149,7 +149,7 @@ const SignupForm = ({ onToggle }) => {
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const navigate = useNavigate();
-  const [showCaptcha, setShowCaptcha] = useState(false);
+  
 
   const handleSignupSubmit = (e) => {
     e.preventDefault();
