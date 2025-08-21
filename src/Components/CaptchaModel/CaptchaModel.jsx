@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import Turnstile from "react-turnstile";
-
+import './Captcha.css'
 
 const CaptchaModal = ({ onVerify, onClose }) => {
   // disable scroll when modal opens
