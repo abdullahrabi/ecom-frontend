@@ -1,18 +1,17 @@
-.captcha-modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
+/* Background blur for whole login/signup page */
+.loginsignup-page {
   display: flex;
-  align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(6px);
+  align-items: center;
+  min-height: 100vh;
+ 
+  backdrop-filter: blur(8px); /* blur effect */
 }
 
-.captcha-modal-content {
-  background: transparent;
-  padding: 24px;
-  border-radius: 16px;
-  max-width: 400px;
-  text-align: center;
+/* Captcha alignment */
+.captcha-container {
+  display: flex;
+  justify-content: center;
+  margin: 15px 0;
+  transform: scale(0.95); /* resize slightly smaller */
 }
