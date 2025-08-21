@@ -15,7 +15,7 @@ const CaptchaModal = ({ onVerify, onClose }) => {
     <div className="captcha-modal-overlay">
       <div className="captcha-modal-content">
         <Turnstile
-          sitekey={import.meta.env.REACT_APP_TURNSTILE_SITE_KEY}
+          sitekey={process.env.REACT_APP_TURNSTILE_SITE_KEY}
           onVerify={(token) => {
             onVerify(token);
             onClose(); // close modal after success
