@@ -9,30 +9,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 3000; /* higher than navbar, login form, etc. */
+  z-index: 9999; /* super high */
   backdrop-filter: blur(6px);
-  animation: fadeIn 0.3s ease-in-out; /* smooth fade */
 }
 
 /* Captcha box */
 .captcha-modal-content {
   background: #fff;
-  padding: 2rem;
+  padding: 1rem;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-  max-width: 400px;
-  width: 90%;
+  max-width: 350px;
+  width: auto;
   text-align: center;
-  animation: scaleIn 0.3s ease-in-out; /* smooth popup */
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes scaleIn {
-  from { transform: scale(0.9); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
