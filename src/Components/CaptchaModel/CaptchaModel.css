@@ -4,32 +4,20 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.5); /* dark overlay */
-  backdrop-filter: blur(6px); /* blur everything behind */
+  background: rgba(0, 0, 0, 0.5); /* semi-dark overlay */
+  backdrop-filter: blur(6px); /* blur background */
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2000; /* keep above everything */
+  z-index: 2000; /* make sure it overlaps everything */
 }
 
 .captcha-modal-content {
   background: #1a1a1a;
-  padding: 24px;
+  padding: 20px;
   border-radius: 12px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
-  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.captcha-close-btn {
-  position: absolute;
-  top: 8px;
-  right: 12px;
-  border: none;
-  background: none;
-  color: #fff;
-  font-size: 20px;
-  cursor: pointer;
 }

@@ -3,7 +3,7 @@ import Turnstile from "react-turnstile";
 import './CaptchaModel';
 
 const CaptchaModal = ({ onVerify, onClose }) => {
-  // disable background scroll
+  // disable scroll when modal opens
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => {
@@ -15,11 +15,8 @@ const CaptchaModal = ({ onVerify, onClose }) => {
     <div className="captcha-modal-overlay" onClick={onClose}>
       <div
         className="captcha-modal-content"
-        onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside captcha
+        onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside
       >
-        <button className="captcha-close-btn" onClick={onClose}>
-          ✖
-        </button>
         <Turnstile
           sitekey={process.env.REACT_APP_TURNSTILE_SITE_KEY}
           onVerify={(token) => {
