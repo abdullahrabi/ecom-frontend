@@ -9,7 +9,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { ShopContext } from '../Context/ShopContext';
-import CaptchaModal from '../Components/CaptchaModel/CaptchaModel.jsx'
+import CaptchaModal from '../Components/CaptchaModel/CaptchaModel.jsx';
 
 // Password Input Component
 const PasswordInput = ({ placeholder, onChange, value, id, name }) => {
@@ -32,9 +32,9 @@ const PasswordInput = ({ placeholder, onChange, value, id, name }) => {
         onClick={() => setPasswordVisible(!passwordVisible)}
         className="eye-icon-button"
       >
-        <img 
-          src={passwordVisible ? eye_icon : eye_off_icon} 
-          alt="Toggle visibility" 
+        <img
+          src={passwordVisible ? eye_icon : eye_off_icon}
+          alt="Toggle visibility"
         />
       </button>
     </div>
@@ -73,70 +73,82 @@ const LoginForm = ({ onToggle }) => {
 
         setPassword('');
         updateToken(token);
-        toast.success("Login Successfully");
+        toast.success('Login Successfully');
         navigate('/');
       } else {
-        toast.error("Unexpected response from the server. Please try again.");
+        toast.error('Unexpected response from the server. Please try again.');
       }
     } catch (err) {
       if (err.response?.data?.message) {
         toast.error(err.response.data.message);
       } else {
-        toast.error("An error occurred during login. Please try again later.");
+        toast.error('An error occurred during login. Please try again later.');
       }
     }
   };
 
   return (
     <>
-      <form className="loginsignup-container" onSubmit={handleLoginSubmit} autoComplete="on">
+      <form
+        className="loginsignup-container"
+        onSubmit={handleLoginSubmit}
+        autoComplete="on"
+      >
         <h1>Login</h1>
         <div className="loginsignup-fields">
-          <input 
-            type="email" 
-            placeholder="Email" 
-            required 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
+          <input
+            type="email"
+            placeholder="Email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
             id="login-email"
             name="email"
           />
-          <PasswordInput 
-            placeholder="Password" 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
+          <PasswordInput
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             id="login-password"
             name="password"
           />
         </div>
         <div className="loginsignup-remember">
-          <input 
-            type="checkbox" 
-            checked={rememberMe} 
-            onChange={(e) => setRememberMe(e.target.checked)} 
+          <input
+            type="checkbox"
+            checked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
             id="remember-me"
             name="rememberMe"
           />
           <label htmlFor="remember-me">Remember me</label>
           <a href="#">Forgot your password?</a>
         </div>
-        <button type="submit" className="login-button">Login</button>
+        <button type="submit" className="login-button">
+          Login
+        </button>
         <button className="toggle-button" onClick={onToggle}>
           Don’t have an account? Sign up here
         </button>
         <h3>OR</h3>
         <div className="google-form">
           <img src={google_icon} alt="Google login" />
-          <button type="button" className="google-button">Continue with Google</button>
+          <button type="button" className="google-button">
+            Continue with Google
+          </button>
         </div>
       </form>
 
       {showCaptcha && (
-        <CaptchaModal
-          onVerify={(token) => handleCaptchaVerify(token)}
-          onClose={() => setShowCaptcha(false)}
-        />
+        <div className="captcha-overlay">
+          <div className="captcha-modal">
+            <CaptchaModal
+              onVerify={(token) => handleCaptchaVerify(token)}
+              onClose={() => setShowCaptcha(false)}
+            />
+          </div>
+        </div>
       )}
     </>
   );
@@ -166,65 +178,77 @@ const SignupForm = ({ onToggle }) => {
         toast.success(response.data.message);
         navigate('/login');
       } else {
-        toast.error("Unexpected response from the server. Please try again.");
+        toast.error('Unexpected response from the server. Please try again.');
       }
     } catch (err) {
       if (err.response?.data?.message) {
         toast.error(err.response.data.message);
       } else {
-        toast.error("An error occurred during signup. Please try again later.");
+        toast.error('An error occurred during signup. Please try again later.');
       }
     }
   };
 
   return (
     <>
-      <form className="loginsignup-container" onSubmit={handleSignupSubmit} autoComplete="on">
+      <form
+        className="loginsignup-container"
+        onSubmit={handleSignupSubmit}
+        autoComplete="on"
+      >
         <h1>Sign Up</h1>
         <div className="loginsignup-fields">
-          <input 
-            type="email" 
-            placeholder="Email" 
-            required 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
+          <input
+            type="email"
+            placeholder="Email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
             id="signup-email"
             name="email"
           />
-          <PasswordInput 
-            placeholder="Password" 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
+          <PasswordInput
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             id="signup-password"
             name="password"
           />
-          <input 
-            type="text" 
-            placeholder="Username" 
-            required 
-            value={username} 
-            onChange={(e) => setUsername(e.target.value)} 
+          <input
+            type="text"
+            placeholder="Username"
+            required
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             id="signup-username"
             name="username"
           />
         </div>
-        <button type="submit" className="login-button">Sign Up</button>
+        <button type="submit" className="login-button">
+          Sign Up
+        </button>
         <button className="toggle-button" onClick={onToggle}>
           Already have an account? Login here
         </button>
         <h3>OR</h3>
         <div className="google-form">
           <img src={google_icon} alt="Google signup" />
-          <button type="button" className="google-button">Continue with Google</button>
+          <button type="button" className="google-button">
+            Continue with Google
+          </button>
         </div>
       </form>
 
       {showCaptcha && (
-        <CaptchaModal
-          onVerify={(token) => handleCaptchaVerify(token)}
-          onClose={() => setShowCaptcha(false)}
-        />
+        <div className="captcha-overlay">
+          <div className="captcha-modal">
+            <CaptchaModal
+              onVerify={(token) => handleCaptchaVerify(token)}
+              onClose={() => setShowCaptcha(false)}
+            />
+          </div>
+        </div>
       )}
     </>
   );
@@ -257,7 +281,11 @@ const LoginSignup = () => {
   return (
     <div className="loginsignup-page">
       <animated.div className="loginsignup-left" style={leftAnimation}>
-        {isSwapped ? <SignupForm onToggle={handleToggle} /> : <LoginForm onToggle={handleToggle} />}
+        {isSwapped ? (
+          <SignupForm onToggle={handleToggle} />
+        ) : (
+          <LoginForm onToggle={handleToggle} />
+        )}
       </animated.div>
 
       <animated.div className="loginsignup-right" style={rightAnimation}>
