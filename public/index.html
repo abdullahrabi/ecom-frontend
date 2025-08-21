@@ -18,30 +18,44 @@
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
     <title>Departmental Store</title>
+
+    <style>
+      /* Fullscreen overlay for CAPTCHA */
+      #captcha-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #000; /* dark background */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999; /* always on top */
+      }
+    </style>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
 
-    <!-- CAPTCHA Container -->
-    <div id="captcha-container"
-         class="cf-turnstile"
-         data-callback="onCaptchaSuccess"
-         data-theme="dark">
+    <!-- CAPTCHA Fullscreen Overlay -->
+    <div id="captcha-overlay">
+      <div id="captcha-container"
+           class="cf-turnstile"
+           data-sitekey="%VITE_TURNSTILE_SITE_KEY%"
+           data-callback="onCaptchaSuccess"
+           data-theme="dark">
+      </div>
     </div>
 
     <!-- React App Container (hidden until CAPTCHA passes) -->
     <div id="root" style="display: none;"></div>
 
-    <script type="module">
-      // Inject env key into captcha element
-      const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
-      document.getElementById("captcha-container").setAttribute("data-sitekey", siteKey);
-
-      // CAPTCHA Success Handler
-      window.onCaptchaSuccess = function(token) {
-        document.getElementById('captcha-container').style.display = 'none';
+    <script>
+      function onCaptchaSuccess(token) {
+        document.getElementById('captcha-overlay').style.display = 'none';
         document.getElementById('root').style.display = 'block';
-      };
+      }
     </script>
   </body>
 </html>
