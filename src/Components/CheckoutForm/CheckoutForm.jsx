@@ -54,7 +54,7 @@ const CheckoutForm = () => {
               checked={paymentMethod === "Jazz Cash"}
               onChange={() => setPaymentMethod("Jazz Cash")}
             />
-            Jazz Cash (Debit Card)
+            Debit Card
           </label>
         </div>
 
