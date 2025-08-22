@@ -1,19 +1,81 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import axios from "axios";
 import './CheckoutForm.css';
 import { toast } from "react-toastify";
+import { ShopContext } from '../../Context/ShopContext';
 
 const CheckoutForm = () => {
-  const [paymentMethod, setPaymentMethod] = useState("cod");
+  const [paymentMethod, setPaymentMethod] = useState("Cash on Delivery");
+  const { all_product, cartItems, setCartItems } = useContext(ShopContext);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (paymentMethod === "Jazz Cash") {
-    
-    
-    
-    
-    } else {
-      toast.success("Order Placed");
+
+    const fullName = e.target.name.value;
+    const address = e.target.address.value;
+    const phoneNumber = e.target.phone.value;
+
+    const orderData = {
+      items: Object.keys(cartItems)
+        .filter(id => cartItems[id] > 0)
+        .map(id => {
+          const product = all_product.find(p => p.id === Number(id));
+          if (!product) return null;
+          return {
+            productId: Number(id),
+            name: product.name,
+            quantity: cartItems[id],
+            price: product.new_price
+          };
+        })
+        .filter(item => item !== null),
+      notes: ""
+    };
+
+    const total = orderData.items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
+    if (!fullName || !address || !phoneNumber || total <= 0) {
+      toast.error("Please fill all fields and make sure cart is not empty");
+      return;
+    }
+
+    if (paymentMethod === "Cash on Delivery") {
+      try {
+        const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+
+        const response = await axios.post(
+          "http://localhost:5000/create-order",
+          {
+            fullName,
+            address,
+            phoneNumber,
+            paymentMethod,
+            paymentStatus: "Pending",
+            total, 
+            orderData
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json"
+            }
+          }
+        );
+
+        console.log("Order response:", response.data);
+        toast.success("Order Placed Successfully!");
+
+        // Clear cart after successful order
+        const emptyCart = {};
+        Object.keys(cartItems).forEach(id => emptyCart[id] = 0);
+        setCartItems(emptyCart);
+
+      } catch (error) {
+        console.error("Error placing order:", error);
+        toast.error("Failed to place order. Please try again.");
+      }
+    } else if (paymentMethod === "Card") {
+      toast.info("Card payment is not implemented yet.");
     }
   };
 
@@ -35,16 +97,16 @@ const CheckoutForm = () => {
           Phone Number
           <input type="text" name="phone" required />
         </label>
-     <h3>Select Payment Method</h3>
+
+        <h3>Select Payment Method</h3>
         <div className="payment-method">
-         
           <label>
             <input
               type="radio"
               name="payment"
-              value="cod"
-              checked={paymentMethod === "cod"}
-              onChange={() => setPaymentMethod("cod")}
+              value="Cash on Delivery"
+              checked={paymentMethod === "Cash on Delivery"}
+              onChange={() => setPaymentMethod("Cash on Delivery")}
             />
             Cash on Delivery
           </label>
@@ -53,11 +115,11 @@ const CheckoutForm = () => {
             <input
               type="radio"
               name="payment"
-              value="Jazz Cash"
-              checked={paymentMethod === "Jazz Cash"}
-              onChange={() => setPaymentMethod("Jazz Cash")}
+              value="Card"
+              checked={paymentMethod === "Card"}
+              onChange={() => setPaymentMethod("Card")}
             />
-            Debit Card
+            Card
           </label>
         </div>
 
