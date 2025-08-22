@@ -74,6 +74,5 @@
 }
 .payment-method input[type="radio"] {
   accent-color: rgb(11, 102, 35);
-  width: 18px;   /* optional: make radio slightly bigger */
-  height: 18px;
+
 }
