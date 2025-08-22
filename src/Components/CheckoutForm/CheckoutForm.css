@@ -46,7 +46,7 @@
 }
 
 .payment-method label {
-  display: block;
+  display: flexbox;
   margin-bottom: 10px;
   cursor: pointer;
   font-weight: 400;
