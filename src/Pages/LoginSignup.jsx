@@ -183,7 +183,7 @@ const LoginSignup = () => {
   // Delay navigate so context token updates
   setTimeout(() => {
     navigate('/');
-  }, 50);
+  }, 500);
 }
       } else if (pendingAction.type === "signup") {
         const { email, password, username } = pendingAction.data;
