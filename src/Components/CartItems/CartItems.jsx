@@ -4,10 +4,11 @@ import { ShopContext } from '../../Context/ShopContext';
 import remove_icon from '../Assests/remove_icon.png';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; // <-- useNavigate hook
 
 const CartItems = () => {
     const { getTotalCartAmount, all_product, cartItems, removeFromCart, updateCartQuantity } = useContext(ShopContext);
+    const navigate = useNavigate(); // <-- initialize navigate
 
     // Check both localStorage and sessionStorage for token
     const [isAuthenticated, setIsAuthenticated] = useState(
@@ -18,28 +19,25 @@ const CartItems = () => {
     const totalCartItems = Object.values(cartItems).reduce((sum, quantity) => sum + quantity, 0);
 
     useEffect(() => {
-        console.log('Cart items:', cartItems);  // Debugging cartItems structure
-        console.log('Total items in cart:', totalCartItems);  // Check if totalCartItems is calculated correctly
+        console.log('Cart items:', cartItems);  
+        console.log('Total items in cart:', totalCartItems);  
     }, [cartItems]);
 
-   // Update cart quantity when user enters it manually
-const handleQuantityChange = (event, productId) => {
-    const newQuantity = parseInt(event.target.value, 10);
-    if (!isNaN(newQuantity) && newQuantity >= 0) {
-        updateCartQuantity(productId, newQuantity);  // Update quantity in context
-    }
-};
-
+    // Update cart quantity when user enters it manually
+    const handleQuantityChange = (event, productId) => {
+        const newQuantity = parseInt(event.target.value, 10);
+        if (!isNaN(newQuantity) && newQuantity >= 0) {
+            updateCartQuantity(productId, newQuantity);
+        }
+    };
 
     const handleCheckout = () => {
         if (!isAuthenticated) {
-            // Show a toast message asking the user to log in
             toast.warning('Kindly Login to Proceed to Checkout');
         } else if (totalCartItems === 0) {
-            // Show a toast message if there are no items in the cart
             toast.warning('Please Add Atleast one Item to Your Cart for Checkout');
         } else {
-          Navigate('/checkout')
+            navigate('/checkout'); // <-- fixed navigation
         }
     };
 
@@ -78,7 +76,7 @@ const handleQuantityChange = (event, productId) => {
                                 <img 
                                     className='cartitems-remove-icon' 
                                     src={remove_icon} 
-                                    onClick={() => removeFromCart(e.id, true)}  // Pass a flag to remove the whole item
+                                    onClick={() => removeFromCart(e.id, true)}
                                     alt="" 
                                 />
                             </div>
