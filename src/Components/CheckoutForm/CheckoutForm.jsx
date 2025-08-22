@@ -13,7 +13,7 @@ const CheckoutForm = () => {
     
     
     } else {
-      toast.success("Placing with Cash on Delivery...");
+      toast.success("Placing Order with Cash on  Payment Method...");
     }
   };
 

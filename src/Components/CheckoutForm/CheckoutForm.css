@@ -15,8 +15,7 @@
 }
 
 .checkout-form label {
-  display: flex;
-  gap:30px;
+  display: block;
   margin-bottom: 15px;
   font-weight: 500;
   color: #444;
@@ -38,6 +37,7 @@
 
 .payment-method {
   margin: 20px 0;
+  display: flex;
 }
 
 .payment-method h3 {
@@ -47,8 +47,8 @@
 }
 
 .payment-method label {
-  display: flex;           
-  gap:10px;
+  display: flex;           /* Use flex layout */
+  gap: 10px; /* Push text left, radio right */
   align-items: center;     /* Vertically center the items */
   margin-bottom: 10px;
   cursor: pointer;
