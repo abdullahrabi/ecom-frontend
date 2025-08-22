@@ -16,40 +16,41 @@ const ShopContextProvider = (props) => {
   const [all_product, setAll_Product] = useState([]);
   const [cartItems, setCartItems] = useState(getDefaultCart());
   const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState(localStorage.getItem('token') || sessionStorage.getItem('token'));
+  const [token, setToken] = useState(localStorage.getItem("token") || sessionStorage.getItem("token"));
+
+  // Axios instance with token
+  const axiosInstance = axios.create();
+  axiosInstance.interceptors.request.use((config) => {
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+    return config;
+  });
 
   const updateToken = (newToken, rememberMe = false) => {
     setToken(newToken);
     if (rememberMe) {
-      localStorage.setItem('token', newToken);
-      sessionStorage.removeItem('token');
+      localStorage.setItem("token", newToken);
+      sessionStorage.removeItem("token");
     } else {
-      sessionStorage.setItem('token', newToken);
-      localStorage.removeItem('token');
+      sessionStorage.setItem("token", newToken);
+      localStorage.removeItem("token");
     }
   };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch('https://dept-store-backend.vercel.app/allproducts');
-        const data = await res.json();
+        const { data } = await axios.get("https://dept-store-backend.vercel.app/allproducts");
         setAll_Product(data);
 
         if (token) {
-          const cartRes = await fetch('https://dept-store-auth-server.vercel.app/getcart', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({})
-          });
-          const cartData = await cartRes.json();
+          const { data: cartData } = await axiosInstance.post(
+            "https://dept-store-auth-server.vercel.app/getcart",
+            {}
+          );
           setCartItems(cartData);
         }
       } catch (err) {
-        console.error('Error fetching products/cart:', err);
+        console.error("Error fetching products/cart:", err);
       } finally {
         setLoading(false);
       }
@@ -59,43 +60,55 @@ const ShopContextProvider = (props) => {
   }, [token]);
 
   const addToCart = async (itemId) => {
-    setCartItems(prev => ({ ...prev, [itemId]: (prev[itemId] || 0) + 1 }));
+    setCartItems((prev) => ({ ...prev, [itemId]: (prev[itemId] || 0) + 1 }));
     if (!token) return;
 
-    await fetch('https://dept-store-auth-server.vercel.app/addtocart', {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ itemId, quantity: 1 })
-    });
+    try {
+      await axiosInstance.post("https://dept-store-auth-server.vercel.app/addtocart", {
+        itemId,
+        quantity: 1,
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const updateCartQuantity = async (itemId, quantity) => {
-    setCartItems(prev => ({ ...prev, [itemId]: quantity }));
+    setCartItems((prev) => ({ ...prev, [itemId]: quantity }));
     if (!token) return;
 
-    await fetch('https://dept-store-auth-server.vercel.app/updatecart', {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ itemId, quantity })
-    });
+    try {
+      await axiosInstance.post("https://dept-store-auth-server.vercel.app/updatecart", {
+        itemId,
+        quantity,
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const removeFromCart = async (itemId, removeCompletely = false) => {
-    setCartItems(prev => ({ ...prev, [itemId]: removeCompletely ? 0 : Math.max(prev[itemId] - 1, 0) }));
+    setCartItems((prev) => ({
+      ...prev,
+      [itemId]: removeCompletely ? 0 : Math.max(prev[itemId] - 1, 0),
+    }));
     if (!token) return;
 
-    await fetch('https://dept-store-auth-server.vercel.app/removetocart', {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ itemId, removeCompletely })
-    });
+    try {
+      await axiosInstance.post("https://dept-store-auth-server.vercel.app/removetocart", {
+        itemId,
+        removeCompletely,
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const getTotalCartAmount = () => {
     let total = 0;
     for (const item in cartItems) {
       if (cartItems[item] > 0) {
-        const product = all_product.find(p => p.id === Number(item));
+        const product = all_product.find((p) => p.id === Number(item));
         if (product) total += product.new_price * cartItems[item];
       }
     }
@@ -111,18 +124,18 @@ const ShopContextProvider = (props) => {
     }
 
     const orderData = Object.keys(cartItems)
-      .filter(id => cartItems[id] > 0)
-      .map(id => {
-        const product = all_product.find(p => p.id === Number(id));
+      .filter((id) => cartItems[id] > 0)
+      .map((id) => {
+        const product = all_product.find((p) => p.id === Number(id));
         if (!product) return null;
         return {
           productId: Number(id),
           name: product.name,
           quantity: cartItems[id],
-          price: product.new_price
+          price: product.new_price,
         };
       })
-      .filter(item => item !== null);
+      .filter((item) => item !== null);
 
     const total = orderData.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
@@ -138,40 +151,45 @@ const ShopContextProvider = (props) => {
 
     try {
       if (paymentMethod === "Cash on Delivery") {
-        await axios.post(
-          "https://dept-store-backend.vercel.app/create-order",
-          { fullName, address, phoneNumber, paymentMethod, paymentStatus: "Pending", total, orderData },
-           { headers: { Authorization: `Bearer ${token}` } } 
-        );
+        await axiosInstance.post("https://dept-store-backend.vercel.app/create-order", {
+          fullName,
+          address,
+          phoneNumber,
+          paymentMethod,
+          paymentStatus: "Pending",
+          total,
+          orderData,
+        });
 
         toast.success("Order Placed Successfully!");
         const emptyCart = {};
-        Object.keys(cartItems).forEach(id => emptyCart[id] = 0);
+        Object.keys(cartItems).forEach((id) => (emptyCart[id] = 0));
         setCartItems(emptyCart);
-
       } else if (paymentMethod === "Card") {
         toast.info("Card payment is not implemented yet.");
       }
-    } catch (error) {
-      console.error("Error placing order:", error);
-      toast.error(error.response?.data?.message || "Failed to place order. Please try again.");
+    } catch (err) {
+      console.error("Error placing order:", err);
+      toast.error(err.response?.data?.message || "Failed to place order. Please try again.");
     }
   };
 
   return (
-    <ShopContext.Provider value={{
-      all_product,
-      cartItems,
-      addToCart,
-      updateCartQuantity,
-      removeFromCart,
-      getTotalCartAmount,
-      getTotalCartItems,
-      updateToken,
-      token,
-      setCartItems,
-      placeOrder
-    }}>
+    <ShopContext.Provider
+      value={{
+        all_product,
+        cartItems,
+        addToCart,
+        updateCartQuantity,
+        removeFromCart,
+        getTotalCartAmount,
+        getTotalCartItems,
+        updateToken,
+        token,
+        setCartItems,
+        placeOrder,
+      }}
+    >
       {loading ? <p>Loading...</p> : props.children}
     </ShopContext.Provider>
   );
