@@ -16,28 +16,21 @@ const ShopContextProvider = (props) => {
   const [all_product, setAll_Product] = useState([]);
   const [cartItems, setCartItems] = useState(getDefaultCart());
   const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState(
-    localStorage.getItem('token') || sessionStorage.getItem('token')
-  );
+  const [token, setToken] = useState(localStorage.getItem('token') || sessionStorage.getItem('token'));
 
   // Persist token and update state
   const updateToken = (newToken, rememberMe = false) => {
     setToken(newToken);
-    if (newToken) {
-      if (rememberMe) {
-        localStorage.setItem('token', newToken);
-        sessionStorage.removeItem('token');
-      } else {
-        sessionStorage.setItem('token', newToken);
-        localStorage.removeItem('token');
-      }
-    } else {
-      localStorage.removeItem('token');
+    if (rememberMe) {
+      localStorage.setItem('token', newToken);
       sessionStorage.removeItem('token');
+    } else {
+      sessionStorage.setItem('token', newToken);
+      localStorage.removeItem('token');
     }
   };
 
-  // Fetch all products & cart data when token changes
+  // Fetch all products & cart data whenever token changes
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -45,9 +38,8 @@ const ShopContextProvider = (props) => {
         const res = await fetch('https://dept-store-backend.vercel.app/allproducts');
         const data = await res.json();
         setAll_Product(data);
-        setLoading(false);
 
-        // Fetch cart if token exists
+        // Fetch cart only if token exists
         if (token) {
           const cartRes = await fetch('https://dept-store-auth-server.vercel.app/getcart', {
             method: 'POST',
@@ -62,108 +54,73 @@ const ShopContextProvider = (props) => {
         }
       } catch (err) {
         console.error('Error fetching products/cart:', err);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchData();
   }, [token]);
 
-  // Add to cart
+  // Cart operations
   const addToCart = async (itemId) => {
     setCartItems(prev => ({ ...prev, [itemId]: (prev[itemId] || 0) + 1 }));
+    if (!token) return;
 
-    if (!token) return console.error('No token found. User not authenticated.');
-
-    try {
-      const res = await fetch('https://dept-store-auth-server.vercel.app/addtocart', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ itemId, quantity: 1 })
-      });
-      console.log("Added to cart:", await res.json());
-    } catch (err) {
-      console.error('Error adding to cart:', err);
-    }
+    await fetch('https://dept-store-auth-server.vercel.app/addtocart', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ itemId, quantity: 1 })
+    });
   };
 
-  // Update cart quantity
   const updateCartQuantity = async (itemId, quantity) => {
     setCartItems(prev => ({ ...prev, [itemId]: quantity }));
+    if (!token) return;
 
-    if (!token) return console.error('No token found. User not authenticated.');
-
-    try {
-      const res = await fetch('https://dept-store-auth-server.vercel.app/updatecart', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ itemId, quantity })
-      });
-      console.log("Updated cart:", await res.json());
-    } catch (err) {
-      console.error('Error updating cart:', err);
-    }
+    await fetch('https://dept-store-auth-server.vercel.app/updatecart', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ itemId, quantity })
+    });
   };
 
-  // Remove from cart
   const removeFromCart = async (itemId, removeCompletely = false) => {
-    setCartItems(prev => ({ 
-      ...prev, 
-      [itemId]: removeCompletely ? 0 : Math.max(prev[itemId] - 1, 0) 
-    }));
+    setCartItems(prev => ({ ...prev, [itemId]: removeCompletely ? 0 : Math.max(prev[itemId] - 1, 0) }));
+    if (!token) return;
 
-    if (!token) return console.error('No token found. User not authenticated.');
-
-    try {
-      const res = await fetch('https://dept-store-auth-server.vercel.app/removetocart', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ itemId, removeCompletely })
-      });
-      console.log("Removed from cart:", await res.json());
-    } catch (err) {
-      console.error('Error removing from cart:', err);
-    }
+    await fetch('https://dept-store-auth-server.vercel.app/removetocart', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ itemId, removeCompletely })
+    });
   };
 
-  // Calculate total cart amount
   const getTotalCartAmount = () => {
-    let totalAmount = 0;
+    let total = 0;
     for (const item in cartItems) {
       if (cartItems[item] > 0) {
         const product = all_product.find(p => p.id === Number(item));
-        if (product) totalAmount += product.new_price * cartItems[item];
+        if (product) total += product.new_price * cartItems[item];
       }
     }
-    return totalAmount;
+    return total;
   };
 
-  // Calculate total cart items
-  const getTotalCartItems = () => {
-    return Object.values(cartItems).reduce((acc, qty) => acc + qty, 0);
-  };
-
-  const contextValue = {
-    all_product,
-    cartItems,
-    addToCart,
-    updateCartQuantity,
-    removeFromCart,
-    getTotalCartAmount,
-    getTotalCartItems,
-    updateToken,
-  };
+  const getTotalCartItems = () => Object.values(cartItems).reduce((acc, qty) => acc + qty, 0);
 
   return (
-    <ShopContext.Provider value={contextValue}>
+    <ShopContext.Provider value={{
+      all_product,
+      cartItems,
+      addToCart,
+      updateCartQuantity,
+      removeFromCart,
+      getTotalCartAmount,
+      getTotalCartItems,
+      updateToken,
+      token
+    }}>
       {loading ? <p>Loading...</p> : props.children}
     </ShopContext.Provider>
   );

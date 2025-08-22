@@ -6,7 +6,7 @@ import { ShopContext } from '../../Context/ShopContext';
 
 const CheckoutForm = () => {
   const [paymentMethod, setPaymentMethod] = useState("Cash on Delivery");
-  const { all_product, cartItems, setCartItems } = useContext(ShopContext);
+  const { all_product, cartItems, setCartItems, token } = useContext(ShopContext); // get token from context
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,34 +15,34 @@ const CheckoutForm = () => {
     const address = e.target.address.value;
     const phoneNumber = e.target.phone.value;
 
-    const orderData = {
-      items: Object.keys(cartItems)
-        .filter(id => cartItems[id] > 0)
-        .map(id => {
-          const product = all_product.find(p => p.id === Number(id));
-          if (!product) return null;
-          return {
-            productId: Number(id),
-            name: product.name,
-            quantity: cartItems[id],
-            price: product.new_price
-          };
-        })
-        .filter(item => item !== null),
-      notes: ""
-    };
+    const orderData = Object.keys(cartItems)
+      .filter(id => cartItems[id] > 0)
+      .map(id => {
+        const product = all_product.find(p => p.id === Number(id));
+        if (!product) return null;
+        return {
+          productId: Number(id),
+          name: product.name,
+          quantity: cartItems[id],
+          price: product.new_price
+        };
+      })
+      .filter(item => item !== null);
 
-    const total = orderData.items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    const total = orderData.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
     if (!fullName || !address || !phoneNumber || total <= 0) {
       toast.error("Please fill all fields and make sure cart is not empty");
       return;
     }
 
-    if (paymentMethod === "Cash on Delivery") {
-      try {
-        const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    if (!token) {
+      toast.error("You must be logged in to place an order");
+      return;
+    }
 
+    try {
+      if (paymentMethod === "Cash on Delivery") {
         const response = await axios.post(
           "https://dept-store-backend.vercel.app/create-order",
           {
@@ -62,20 +62,19 @@ const CheckoutForm = () => {
           }
         );
 
-        console.log("Order response:", response.data);
         toast.success("Order Placed Successfully!");
 
-        // Clear cart after successful order
+        // Clear cart
         const emptyCart = {};
         Object.keys(cartItems).forEach(id => emptyCart[id] = 0);
         setCartItems(emptyCart);
 
-      } catch (error) {
-        console.error("Error placing order:", error);
-        toast.error("Failed to place order. Please try again.");
+      } else if (paymentMethod === "Card") {
+        toast.info("Card payment is not implemented yet.");
       }
-    } else if (paymentMethod === "Card") {
-      toast.info("Card payment is not implemented yet.");
+    } catch (error) {
+      console.error("Error placing order:", error);
+      toast.error(error.response?.data?.message || "Failed to place order. Please try again.");
     }
   };
 
