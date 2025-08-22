@@ -46,8 +46,8 @@
 }
 
 .payment-method label {
-  display: flex;           /* Use flex layout */
-  justify-content: space-between; /* Push text left, radio right */
+  display: flex;           
+  gap:10px;
   align-items: center;     /* Vertically center the items */
   margin-bottom: 10px;
   cursor: pointer;
