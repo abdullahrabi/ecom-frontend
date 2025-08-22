@@ -45,34 +45,19 @@
   color: #333;
 }
 
-/* Flex container for horizontal radio buttons */
-.payment-method-options {
-  display: flex;
-  gap: 20px; /* space between options */
-}
-
-/* Labels inside flex container */
-.payment-method-options label {
+.payment-method label {
   display: flex;        /* horizontal layout for radio + text */
-  align-items: center;  /* vertically center text */
+  align-items: center;  /* vertically center the text */
   gap: 6px;             /* spacing between radio and text */
   cursor: pointer;
   font-weight: 400;
-  margin-bottom: 0;
-}
-
-/* Change selected radio button color to green */
-.payment-method-options input[type="radio"] {
-  accent-color: rgb(11, 102, 35); /* selected color */
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
+  margin-bottom: 0;     /* remove bottom margin */
 }
 
 .submit-btn {
   width: 100%;
   padding: 12px;
-  background: rgb(11, 102, 35);
+  background:rgb(11, 102, 35);
   color: white;
   border: none;
   border-radius: 8px;
