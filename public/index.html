@@ -14,20 +14,43 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
 
-  
-
     <title>Departmental Store</title>
 
-   
+    <!-- Cloudflare Turnstile -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    <style>
+      #root {
+        display: none; /* Hide app until captcha is solved */
+      }
+      #captcha-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+    </style>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
 
-    
+    <!-- Captcha Container -->
+    <div id="captcha-container">
+      <div class="cf-turnstile"
+        data-sitekey="%REACT_APP_TURNSTILE_SITE_KEY%"
+        data-callback="onCaptchaSuccess">
+      </div>
+    </div>
 
-    <!-- React App Container (hidden until CAPTCHA passes) -->
+    <!-- React App Container -->
     <div id="root"></div>
 
-    
+    <script>
+      function onCaptchaSuccess(token) {
+        // Hide captcha
+        document.getElementById('captcha-container').style.display = 'none';
+        // Show React app
+        document.getElementById('root').style.display = 'block';
+      }
+    </script>
   </body>
 </html>
