@@ -16,17 +16,24 @@ const ShopContextProvider = (props) => {
   const [all_product, setAll_Product] = useState([]);
   const [cartItems, setCartItems] = useState(getDefaultCart());
   const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState(localStorage.getItem('token') || sessionStorage.getItem('token'));
+  const [token, setToken] = useState(
+    localStorage.getItem('token') || sessionStorage.getItem('token')
+  );
 
   // Persist token and update state
   const updateToken = (newToken, rememberMe = false) => {
     setToken(newToken);
-    if (rememberMe) {
-      localStorage.setItem('token', newToken);
-      sessionStorage.removeItem('token');
+    if (newToken) {
+      if (rememberMe) {
+        localStorage.setItem('token', newToken);
+        sessionStorage.removeItem('token');
+      } else {
+        sessionStorage.setItem('token', newToken);
+        localStorage.removeItem('token');
+      }
     } else {
-      sessionStorage.setItem('token', newToken);
       localStorage.removeItem('token');
+      sessionStorage.removeItem('token');
     }
   };
 

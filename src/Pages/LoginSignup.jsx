@@ -177,16 +177,7 @@ const LoginSignup = () => {
         );
 
         if (res.data?.token) {
-          // Always update both context and storage
-          updateToken(res.data.token);
-          if (rememberMe) {
-            localStorage.setItem('token', res.data.token);
-            sessionStorage.removeItem('token'); // remove session token to avoid conflict
-          } else {
-            sessionStorage.setItem('token', res.data.token);
-            localStorage.removeItem('token'); // remove local storage token
-          }
-
+          updateToken(res.data.token, rememberMe); // <--- use context helper
           toast.success("Login Successfully");
           navigate('/');
         }
