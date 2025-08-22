@@ -38,6 +38,7 @@
 .payment-method {
   margin: 20px 0;
   display: flex;
+  gap:30px;
 }
 
  h3 {
@@ -48,7 +49,7 @@
 
 .payment-method label {
   display: flex;           /* Use flex layout */
-  gap: 10px; /* Push text left, radio right */
+  gap: 5px; /* Push text left, radio right */
   align-items: center;     /* Vertically center the items */
   margin-bottom: 10px;
   cursor: pointer;
