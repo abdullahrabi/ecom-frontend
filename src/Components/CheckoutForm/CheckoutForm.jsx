@@ -1,70 +1,36 @@
-import React, { useState, useContext } from "react";
-import './CheckoutForm.css';
-import { ShopContext } from '../../Context/ShopContext';
+import React, { useState, useContext } from 'react';
+import { ShopContext } from '../Context/ShopContext';
+import { toast } from 'react-toastify';
 
 const CheckoutForm = () => {
-  const [paymentMethod, setPaymentMethod] = useState("Cash on Delivery");
-  const { placeOrder } = useContext(ShopContext);
+  const { placeOrder, getTotalCartAmount } = useContext(ShopContext);
+  const [fullName, setFullName] = useState('');
+  const [address, setAddress] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('Cash on Delivery');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const fullName = e.target.name.value;
-    const address = e.target.address.value;
-    const phoneNumber = e.target.phone.value;
-
-    placeOrder({ fullName, address, phoneNumber, paymentMethod });
+    if (getTotalCartAmount() <= 0) {
+      toast.error("Your cart is empty!");
+      return;
+    }
+    await placeOrder({ fullName, address, phoneNumber, paymentMethod });
+    setFullName(''); setAddress(''); setPhoneNumber(''); setPaymentMethod('Cash on Delivery');
   };
 
   return (
-    <div className="checkout-container">
+    <form onSubmit={handleSubmit}>
       <h2>Checkout</h2>
-      <form onSubmit={handleSubmit} className="checkout-form">
-        <label>
-          Full Name
-          <input type="text" name="name" required />
-        </label>
-
-        <label>
-          Address
-          <textarea name="address" rows="3" required></textarea>
-        </label>
-
-        <label>
-          Phone Number
-          <input type="text" name="phone" required />
-        </label>
-
-        <h3>Select Payment Method</h3>
-        <div className="payment-method">
-          <label>
-            <input
-              type="radio"
-              name="payment"
-              value="Cash on Delivery"
-              checked={paymentMethod === "Cash on Delivery"}
-              onChange={() => setPaymentMethod("Cash on Delivery")}
-            />
-            Cash on Delivery
-          </label>
-
-          <label>
-            <input
-              type="radio"
-              name="payment"
-              value="Card"
-              checked={paymentMethod === "Card"}
-              onChange={() => setPaymentMethod("Card")}
-            />
-            Card
-          </label>
-        </div>
-
-        <button type="submit" className="submit-btn">
-          Place Order
-        </button>
-      </form>
-    </div>
+      <input type="text" placeholder="Full Name" value={fullName} onChange={e => setFullName(e.target.value)} required />
+      <input type="text" placeholder="Address" value={address} onChange={e => setAddress(e.target.value)} required />
+      <input type="text" placeholder="Phone Number" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} required />
+      <select value={paymentMethod} onChange={e => setPaymentMethod(e.target.value)}>
+        <option value="Cash on Delivery">Cash on Delivery</option>
+        <option value="Card">Card</option>
+      </select>
+      <button type="submit">Place Order</button>
+    </form>
   );
 };
 

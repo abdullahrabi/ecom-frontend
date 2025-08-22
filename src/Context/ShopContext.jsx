@@ -2,10 +2,8 @@ import React, { createContext, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-// Create ShopContext
 export const ShopContext = createContext(null);
 
-// Default cart setup
 const getDefaultCart = () => {
   let cart = {};
   for (let index = 1; index <= 300; index++) {
@@ -20,7 +18,6 @@ const ShopContextProvider = (props) => {
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(localStorage.getItem('token') || sessionStorage.getItem('token'));
 
-  // Persist token and update state
   const updateToken = (newToken, rememberMe = false) => {
     setToken(newToken);
     if (rememberMe) {
@@ -32,7 +29,6 @@ const ShopContextProvider = (props) => {
     }
   };
 
-  // Fetch products and cart
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -62,7 +58,6 @@ const ShopContextProvider = (props) => {
     fetchData();
   }, [token]);
 
-  // Cart operations
   const addToCart = async (itemId) => {
     setCartItems(prev => ({ ...prev, [itemId]: (prev[itemId] || 0) + 1 }));
     if (!token) return;
@@ -96,7 +91,6 @@ const ShopContextProvider = (props) => {
     });
   };
 
-  // Cart helpers
   const getTotalCartAmount = () => {
     let total = 0;
     for (const item in cartItems) {
@@ -108,11 +102,8 @@ const ShopContextProvider = (props) => {
     return total;
   };
 
-  const getTotalCartItems = () => {
-    return Object.values(cartItems).reduce((acc, quantity) => acc + quantity, 0);
-  };
+  const getTotalCartItems = () => Object.values(cartItems).reduce((acc, qty) => acc + qty, 0);
 
-  // **New: placeOrder function**
   const placeOrder = async ({ fullName, address, phoneNumber, paymentMethod }) => {
     if (!fullName || !address || !phoneNumber) {
       toast.error("Please fill all fields");
@@ -150,12 +141,10 @@ const ShopContextProvider = (props) => {
         await axios.post(
           "https://dept-store-backend.vercel.app/create-order",
           { fullName, address, phoneNumber, paymentMethod, paymentStatus: "Pending", total, orderData },
-            { headers: { Authorization: {token} } } 
+          { headers: { Authorization: `Bearer ${token}` } }
         );
 
         toast.success("Order Placed Successfully!");
-
-        // Clear cart
         const emptyCart = {};
         Object.keys(cartItems).forEach(id => emptyCart[id] = 0);
         setCartItems(emptyCart);
