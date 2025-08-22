@@ -96,6 +96,7 @@ const ShopContextProvider = (props) => {
     });
   };
 
+  // Get total cart amount
   const getTotalCartAmount = () => {
     let total = 0;
     for (const item in cartItems) {
@@ -107,7 +108,10 @@ const ShopContextProvider = (props) => {
     return total;
   };
 
-  const getTotalCartItems = () => Object.values(cartItems).reduce((acc, qty) => acc + qty, 0);
+  // Get total number of items in cart
+  const getTotalCartItems = () => {
+    return Object.values(cartItems).reduce((acc, quantity) => acc + quantity, 0);
+  };
 
   return (
     <ShopContext.Provider value={{
@@ -119,7 +123,8 @@ const ShopContextProvider = (props) => {
       getTotalCartAmount,
       getTotalCartItems,
       updateToken,
-      token
+      token,
+      setCartItems // for clearing cart after order
     }}>
       {loading ? <p>Loading...</p> : props.children}
     </ShopContext.Provider>

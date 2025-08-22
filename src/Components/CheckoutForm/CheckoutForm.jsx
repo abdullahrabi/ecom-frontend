@@ -6,9 +6,9 @@ import { ShopContext } from '../../Context/ShopContext';
 
 const CheckoutForm = () => {
   const [paymentMethod, setPaymentMethod] = useState("Cash on Delivery");
-  const { all_product, cartItems, setCartItems, token } = useContext(ShopContext); // get token from context
+  const { cartItems, all_product, getTotalCartAmount, token, setCartItems } = useContext(ShopContext);
 
-  const handleSubmit = async (e) => {
+  const handleSubmitOrder = async (e) => {
     e.preventDefault();
 
     const fullName = e.target.name.value;
@@ -43,7 +43,7 @@ const CheckoutForm = () => {
 
     try {
       if (paymentMethod === "Cash on Delivery") {
-        const response = await axios.post(
+        await axios.post(
           "https://dept-store-backend.vercel.app/create-order",
           {
             fullName,
@@ -51,20 +51,16 @@ const CheckoutForm = () => {
             phoneNumber,
             paymentMethod,
             paymentStatus: "Pending",
-            total, 
+            total,
             orderData
           },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json"
-            }
-          }
+          { headers: { Authorization: `Bearer ${token}` ,
+         'Content-Type': 'application/json'} }
         );
 
         toast.success("Order Placed Successfully!");
 
-        // Clear cart
+        // Clear cart locally
         const emptyCart = {};
         Object.keys(cartItems).forEach(id => emptyCart[id] = 0);
         setCartItems(emptyCart);
@@ -81,7 +77,7 @@ const CheckoutForm = () => {
   return (
     <div className="checkout-container">
       <h2>Checkout</h2>
-      <form onSubmit={handleSubmit} className="checkout-form">
+      <form onSubmit={handleSubmitOrder} className="checkout-form">
         <label>
           Full Name
           <input type="text" name="name" required />
