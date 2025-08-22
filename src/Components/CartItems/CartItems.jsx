@@ -4,6 +4,7 @@ import { ShopContext } from '../../Context/ShopContext';
 import remove_icon from '../Assests/remove_icon.png';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Navigate } from 'react-router-dom';
 
 const CartItems = () => {
     const { getTotalCartAmount, all_product, cartItems, removeFromCart, updateCartQuantity } = useContext(ShopContext);
@@ -38,9 +39,7 @@ const handleQuantityChange = (event, productId) => {
             // Show a toast message if there are no items in the cart
             toast.warning('Please Add Atleast one Item to Your Cart for Checkout');
         } else {
-            // Proceed to checkout
-            console.log('Proceeding to checkout...');
-            toast.success('Proceeding to Checkout!');
+          Navigate('/checkout')
         }
     };
 

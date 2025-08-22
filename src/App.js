@@ -12,6 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Footer from './Components/Footer/Footer';
 import { useEffect } from 'react';
 import Turnstile from 'react-turnstile';
+import CheckoutForm from './Components/CheckoutForm/CheckoutForm';
 function App() {
   
   return (
@@ -33,6 +34,7 @@ function App() {
           <Route path='/product/:productId' element={<Product />} />
           <Route path='/cart' element={<Cart />} />
           <Route path='/login' element={<LoginSignup />} />
+          <Route path='/checkout' element={<CheckoutForm/>} />
         </Routes>
 
         <Footer />
