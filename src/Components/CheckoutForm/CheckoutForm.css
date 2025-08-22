@@ -46,12 +46,10 @@
 }
 
 .payment-method label {
-  display: flex;        /* horizontal layout for radio + text */
-  align-items: center;  /* vertically center the text */
-  gap: 6px;             /* spacing between radio and text */
+  display: block;
+  margin-bottom: 10px;
   cursor: pointer;
   font-weight: 400;
-  margin-bottom: 0;     /* remove bottom margin */
 }
 
 .submit-btn {
