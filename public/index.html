@@ -18,6 +18,28 @@
 
     <!-- Cloudflare Turnstile -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    <style>
+      #root {
+        display: none; /* Hide app until captcha is solved */
+      }
+      #captcha-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        
+      }
+      body.captcha-active {
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        background-color: #28282B; /* Black background only for captcha */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+}
+
+    </style>
   </head>
   <body class="captcha-active">
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -26,8 +48,7 @@
     <div id="captcha-container">
       <div class="cf-turnstile"
         data-sitekey="%REACT_APP_TURNSTILE_SITE_KEY%"
-        data-callback="onCaptchaSuccess"
-        data-theme="dark">
+        data-callback="onCaptchaSuccess">
       </div>
     </div>
 
@@ -40,7 +61,7 @@
         document.getElementById('captcha-container').style.display = 'none';
         // Show React app
         document.getElementById('root').style.display = 'block';
-        // Remove black background
+          // Remove black background once captcha is done
         document.body.classList.remove("captcha-active");
       }
     </script>
