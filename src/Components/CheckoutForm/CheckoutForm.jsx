@@ -35,7 +35,7 @@ const CheckoutForm = () => {
 
         <div className="payment-method">
           <h3>Select Payment Method</h3>
-          <label>
+          <label className="cod option">
             <input
               type="radio"
               name="payment"
