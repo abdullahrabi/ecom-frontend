@@ -141,7 +141,7 @@ const ShopContextProvider = (props) => {
         await axios.post(
           "https://dept-store-backend.vercel.app/create-order",
           { fullName, address, phoneNumber, paymentMethod, paymentStatus: "Pending", total, orderData },
-          { headers: { Authorization: `Bearer ${token}` } }
+           { headers: { Authorization: `Bearer ${token}` } } 
         );
 
         toast.success("Order Placed Successfully!");
