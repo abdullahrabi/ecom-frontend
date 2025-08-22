@@ -55,7 +55,7 @@
 .submit-btn {
   width: 100%;
   padding: 12px;
-  background: #4cafef;
+  background:rgb(11, 102, 35);
   color: white;
   border: none;
   border-radius: 8px;
@@ -66,5 +66,5 @@
 }
 
 .submit-btn:hover {
-  background: #3a9dd8;
+  background: rgb(11, 102, 35);
 }
