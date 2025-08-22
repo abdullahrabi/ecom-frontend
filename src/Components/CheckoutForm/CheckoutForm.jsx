@@ -1,7 +1,6 @@
 import React, { useState, useContext } from 'react';
-import { ShopContext } from '../Context/ShopContext';
 import { toast } from 'react-toastify';
-
+import { ShopContext } from '../../Context/ShopContext';
 const CheckoutForm = () => {
   const { placeOrder, getTotalCartAmount } = useContext(ShopContext);
   const [fullName, setFullName] = useState('');
