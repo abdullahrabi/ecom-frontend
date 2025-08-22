@@ -10,6 +10,7 @@ const CheckoutForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("handleSubmit triggered");
 
     const fullName = e.target.name.value;
     const address = e.target.address.value;
