@@ -18,26 +18,16 @@
 
     <!-- Cloudflare Turnstile -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-    <style>
-      #root {
-        display: none; /* Hide app until captcha is solved */
-      }
-      #captcha-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-      }
-    </style>
   </head>
-  <body>
+  <body class="captcha-active">
     <noscript>You need to enable JavaScript to run this app.</noscript>
 
     <!-- Captcha Container -->
     <div id="captcha-container">
       <div class="cf-turnstile"
         data-sitekey="%REACT_APP_TURNSTILE_SITE_KEY%"
-        data-callback="onCaptchaSuccess">
+        data-callback="onCaptchaSuccess"
+        data-theme="dark">
       </div>
     </div>
 
@@ -50,6 +40,8 @@
         document.getElementById('captcha-container').style.display = 'none';
         // Show React app
         document.getElementById('root').style.display = 'block';
+        // Remove black background
+        document.body.classList.remove("captcha-active");
       }
     </script>
   </body>
