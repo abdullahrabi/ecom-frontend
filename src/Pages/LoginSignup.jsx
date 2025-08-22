@@ -172,7 +172,7 @@ const LoginSignup = () => {
       if (pendingAction.type === "login") {
         const { email, password, rememberMe } = pendingAction.data;
         const res = await axios.post(
-          'https://dept-store-auth-server.vercel.app/api/auth/login',
+          'https://dept-store-backend.vercel.app/api/auth/login',
           { email, password }
         );
 
@@ -185,7 +185,7 @@ const LoginSignup = () => {
       } else if (pendingAction.type === "signup") {
         const { email, password, username } = pendingAction.data;
         const res = await axios.post(
-          'https://dept-store-auth-server.vercel.app/api/auth/register',
+          'https://dept-store-backend.vercel.app/api/auth/register',
           { name: username, email, password }
         );
 

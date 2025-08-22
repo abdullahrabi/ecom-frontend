@@ -44,7 +44,7 @@ const ShopContextProvider = (props) => {
 
         if (token) {
           const { data: cartData } = await axiosInstance.post(
-            "https://dept-store-auth-server.vercel.app/getcart",
+            "https://dept-store-backend.vercel.app/getcart",
             {}
           );
           setCartItems(cartData);
@@ -64,7 +64,7 @@ const ShopContextProvider = (props) => {
     if (!token) return;
 
     try {
-      await axiosInstance.post("https://dept-store-auth-server.vercel.app/addtocart", {
+      await axiosInstance.post("https://dept-store-backend.vercel.app/addtocart", {
         itemId,
         quantity: 1,
       });
@@ -78,7 +78,7 @@ const ShopContextProvider = (props) => {
     if (!token) return;
 
     try {
-      await axiosInstance.post("https://dept-store-auth-server.vercel.app/updatecart", {
+      await axiosInstance.post("https://dept-store-backend.vercel.app/updatecart", {
         itemId,
         quantity,
       });
@@ -95,7 +95,7 @@ const ShopContextProvider = (props) => {
     if (!token) return;
 
     try {
-      await axiosInstance.post("https://dept-store-auth-server.vercel.app/removetocart", {
+      await axiosInstance.post("https://dept-store-backend.vercel.app/removetocart", {
         itemId,
         removeCompletely,
       });
