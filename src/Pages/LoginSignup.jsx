@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import './CSS/LoginSignup.css';
 import { useSpring, animated } from '@react-spring/web';
 import login_icon from '../Components/Assests/Login.jpg';
@@ -32,10 +32,7 @@ const PasswordInput = ({ placeholder, onChange, value, id, name }) => {
         onClick={() => setPasswordVisible(!passwordVisible)}
         className="eye-icon-button"
       >
-        <img 
-          src={passwordVisible ? eye_icon : eye_off_icon} 
-          alt="Toggle visibility" 
-        />
+        <img src={passwordVisible ? eye_icon : eye_off_icon} alt="Toggle visibility" />
       </button>
     </div>
   );
@@ -178,13 +175,18 @@ const LoginSignup = () => {
           'https://dept-store-auth-server.vercel.app/api/auth/login',
           { email, password }
         );
+
         if (res.data?.token) {
+          // Always update both context and storage
+          updateToken(res.data.token);
           if (rememberMe) {
             localStorage.setItem('token', res.data.token);
+            sessionStorage.removeItem('token'); // remove session token to avoid conflict
           } else {
             sessionStorage.setItem('token', res.data.token);
+            localStorage.removeItem('token'); // remove local storage token
           }
-          updateToken(res.data.token);
+
           toast.success("Login Successfully");
           navigate('/');
         }
@@ -194,6 +196,7 @@ const LoginSignup = () => {
           'https://dept-store-auth-server.vercel.app/api/auth/register',
           { name: username, email, password }
         );
+
         if (res.data?.message) {
           toast.success(res.data.message);
           navigate('/login');
@@ -218,12 +221,6 @@ const LoginSignup = () => {
     opacity: isSwapped ? 0.8 : 1,
     config: { tension: 1000, friction: 60 },
   });
-
-  useEffect(() => {
-    const handleBeforeUnload = () => localStorage.clear();
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, []);
 
   return (
     <div className="loginsignup-page">
