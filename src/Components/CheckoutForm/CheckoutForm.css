@@ -15,7 +15,8 @@
 }
 
 .checkout-form label {
-  display: block;
+  display: flex;
+  gap:30px;
   margin-bottom: 15px;
   font-weight: 500;
   color: #444;

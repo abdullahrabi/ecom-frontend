@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import './CheckoutForm.css';
+import { toast } from "react-toastify";
 
 const CheckoutForm = () => {
   const [paymentMethod, setPaymentMethod] = useState("cod");
@@ -7,10 +8,12 @@ const CheckoutForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (paymentMethod === "Jazz Cash") {
-      // Later integrate Stripe payment flow
-      console.log("Proceeding with Stripe Payment...");
+    
+    
+    
+    
     } else {
-      console.log("Proceeding with Cash on Delivery...");
+      toast.success("Placing with Cash on Delivery...");
     }
   };
 
