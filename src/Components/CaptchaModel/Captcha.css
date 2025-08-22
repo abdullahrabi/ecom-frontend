@@ -5,7 +5,6 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -18,8 +17,7 @@
   background:transparent;
   padding: 1rem;
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-  max-width: 350px;
+   max-width: 350px;
   width: auto;
   text-align: center;
   display: flex;
