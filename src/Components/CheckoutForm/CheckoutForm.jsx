@@ -35,9 +35,9 @@ const CheckoutForm = () => {
           Phone Number
           <input type="text" name="phone" required />
         </label>
-
+     <h3>Select Payment Method</h3>
         <div className="payment-method">
-          <h3>Select Payment Method</h3>
+         
           <label>
             <input
               type="radio"
