@@ -176,11 +176,15 @@ const LoginSignup = () => {
           { email, password }
         );
 
-        if (res.data?.token) {
-          updateToken(res.data.token, rememberMe); // <--- use context helper
-          toast.success("Login Successfully");
-          navigate('/');
-        }
+       if (res.data?.token) {
+  updateToken(res.data.token, rememberMe); // use context helper
+  toast.success("Login Successfully");
+
+  // Delay navigate so context token updates
+  setTimeout(() => {
+    navigate('/');
+  }, 50);
+}
       } else if (pendingAction.type === "signup") {
         const { email, password, username } = pendingAction.data;
         const res = await axios.post(
