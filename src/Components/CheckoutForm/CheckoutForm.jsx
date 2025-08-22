@@ -6,7 +6,7 @@ const CheckoutForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (paymentMethod === "stripe") {
+    if (paymentMethod === "Jazz Cash") {
       // Later integrate Stripe payment flow
       console.log("Proceeding with Stripe Payment...");
     } else {
@@ -35,7 +35,7 @@ const CheckoutForm = () => {
 
         <div className="payment-method">
           <h3>Select Payment Method</h3>
-          <label className="cod option">
+          <label>
             <input
               type="radio"
               name="payment"
@@ -50,9 +50,9 @@ const CheckoutForm = () => {
             <input
               type="radio"
               name="payment"
-              value="stripe"
-              checked={paymentMethod === "stripe"}
-              onChange={() => setPaymentMethod("stripe")}
+              value="Jazz Cash"
+              checked={paymentMethod === "Jazz Cash"}
+              onChange={() => setPaymentMethod("Jazz Cash")}
             />
             Stripe (Debit Card)
           </label>
