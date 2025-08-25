@@ -70,10 +70,7 @@ const ShopContextProvider = (props) => {
     try {
       await axiosInstance.post(
         "https://dept-store-backend.vercel.app/addtocart",
-        {
-          itemId,
-          quantity: 1,
-        }
+        { itemId, quantity: 1 }
       );
     } catch (err) {
       console.error(err);
@@ -87,10 +84,7 @@ const ShopContextProvider = (props) => {
     try {
       await axiosInstance.post(
         "https://dept-store-backend.vercel.app/updatecart",
-        {
-          itemId,
-          quantity,
-        }
+        { itemId, quantity }
       );
     } catch (err) {
       console.error(err);
@@ -107,10 +101,7 @@ const ShopContextProvider = (props) => {
     try {
       await axiosInstance.post(
         "https://dept-store-backend.vercel.app/removetocart",
-        {
-          itemId,
-          removeCompletely,
-        }
+        { itemId, removeCompletely }
       );
     } catch (err) {
       console.error(err);
@@ -197,14 +188,14 @@ const ShopContextProvider = (props) => {
           return;
         }
 
-        // ✅ Initialize 2Pay.js with publishable key
+        // ✅ Initialize 2Pay.js client
         const twoPayClient = new window.TwoPayClient(
           process.env.REACT_APP_2CHECKOUT_PUBLISHABLE_KEY
         );
 
         // ✅ Create token with card data
-        const tokenResponse = await twoPayClient.tokenize({
-          sellerId: process.env.REACT_APP_2CHECKOUT_SELLER_ID, // must be set in .env
+        const tokenResponse = await twoPayClient.tokens.create({
+          sellerId: process.env.REACT_APP_2CHECKOUT_MERCHANT_CODE, // Merchant Code from your .env
           publishableKey: process.env.REACT_APP_2CHECKOUT_PUBLISHABLE_KEY,
           ccNo: cardData.cardNumber,
           cvv: cardData.cvv,
@@ -218,7 +209,7 @@ const ShopContextProvider = (props) => {
             zipCode: cardData.zip,
             country: cardData.country,
             email: cardData.email,
-            phoneNumber,
+            phone: phoneNumber,
           },
         });
 
