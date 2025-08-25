@@ -1,10 +1,10 @@
 import React, { useState, useContext } from "react";
-import "./CheckoutForm.css";
-import { ShopContext } from "../../Context/ShopContext";
+import './CheckoutForm.css';
+import { ShopContext } from '../../Context/ShopContext';
 
 const CheckoutForm = () => {
   const [paymentMethod, setPaymentMethod] = useState("Cash on Delivery");
-  const { checkout } = useContext(ShopContext);
+  const { placeOrder } = useContext(ShopContext);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -13,13 +13,7 @@ const CheckoutForm = () => {
     const address = e.target.address.value;
     const phoneNumber = e.target.phone.value;
 
-    if (paymentMethod === "Cash on Delivery") {
-      alert("Order placed with Cash on Delivery ✅");
-      // Here you can also call your backend to save COD orders
-    } else if (paymentMethod === "Card") {
-      // ✅ Call checkout (this will redirect to 2Checkout)
-      checkout({ fullName, address, phoneNumber });
-    }
+    placeOrder({ fullName, address, phoneNumber, paymentMethod });
   };
 
   return (
