@@ -127,7 +127,6 @@ const ShopContextProvider = (props) => {
     address,
     phoneNumber,
     paymentMethod,
-    cardData,
   }) => {
     if (!fullName || !address || !phoneNumber) {
       toast.error("Please fill all fields");
@@ -183,57 +182,24 @@ const ShopContextProvider = (props) => {
         Object.keys(cartItems).forEach((id) => (emptyCart[id] = 0));
         setCartItems(emptyCart);
       } else if (paymentMethod === "Card") {
-        if (!cardData) {
-          toast.error("Please enter card details");
-          return;
-        }
-
-        // ✅ Initialize 2Pay.js client
-        const twoPayClient = new window.TwoPayClient(
-          process.env.REACT_APP_2CHECKOUT_PUBLISHABLE_KEY
-        );
-
-        // ✅ Create token with card data
-        const tokenResponse = await twoPayClient.tokens.create({
-          sellerId: process.env.REACT_APP_2CHECKOUT_MERCHANT_CODE, // Merchant Code from your .env
-          publishableKey: process.env.REACT_APP_2CHECKOUT_PUBLISHABLE_KEY,
-          ccNo: cardData.cardNumber,
-          cvv: cardData.cvv,
-          expMonth: cardData.expMonth,
-          expYear: cardData.expYear,
-          billingAddr: {
-            name: fullName,
-            addrLine1: address,
-            city: cardData.city,
-            state: cardData.state,
-            zipCode: cardData.zip,
-            country: cardData.country,
-            email: cardData.email,
-            phone: phoneNumber,
-          },
-        });
-
-        const paymentToken = tokenResponse.token;
-
-        // ✅ Send token + order data to backend
-        await axiosInstance.post(
+        // ✅ Call backend to create hosted checkout session
+        const res = await axiosInstance.post(
           "https://dept-store-backend.vercel.app/api/auth/payment",
           {
             fullName,
             address,
             phoneNumber,
             paymentMethod,
-            paymentStatus: "Pending",
             total,
             orderData,
-            token: paymentToken,
           }
         );
 
-        toast.success("Payment successful! Order placed.");
-        const emptyCart = {};
-        Object.keys(cartItems).forEach((id) => (emptyCart[id] = 0));
-        setCartItems(emptyCart);
+        if (res.data.checkoutUrl) {
+          window.location.href = res.data.checkoutUrl; // redirect user to 2Checkout Hosted Checkout
+        } else {
+          toast.error("Failed to initiate payment");
+        }
       }
     } catch (err) {
       console.error("Error placing order:", err);
