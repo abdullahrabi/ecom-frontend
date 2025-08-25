@@ -179,7 +179,7 @@ const ShopContextProvider = (props) => {
         const paymentToken = tokenResponse.token;
 
         // Send token + order data to backend
-        await axiosInstance.post("https://dept-store-backend.vercel.app/payment", {
+        await axiosInstance.post("https://dept-store-backend.vercel.app/api/auth/payment", {
           fullName,
           address,
           phoneNumber,
