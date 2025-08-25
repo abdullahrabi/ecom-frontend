@@ -117,7 +117,7 @@ const ShopContextProvider = (props) => {
 
   const getTotalCartItems = () => Object.values(cartItems).reduce((acc, qty) => acc + qty, 0);
 
-  const placeOrder = async ({ fullName, address, phoneNumber, paymentMethod }) => {
+  const placeOrder = async ({ fullName, address, phoneNumber, paymentMethod, cardData }) => {
     if (!fullName || !address || !phoneNumber) {
       toast.error("Please fill all fields");
       return;
@@ -166,7 +166,34 @@ const ShopContextProvider = (props) => {
         Object.keys(cartItems).forEach((id) => (emptyCart[id] = 0));
         setCartItems(emptyCart);
       } else if (paymentMethod === "Card") {
-        toast.info("Card payment is not implemented yet.");
+        if (!cardData) {
+          toast.error("Please enter card details");
+          return;
+        }
+
+        // Load 2Pay.js (must be included in index.html: <script src="https://2pay-js.2checkout.com/v1/2pay.js"></script>)
+        const twoPay = window.TwoPayClient(process.env.REACT_APP_2CHECKOUT_PUBLISHABLE_KEY);
+
+        // Create token with card data
+        const tokenResponse = await twoPay.tokens.create(cardData);
+        const paymentToken = tokenResponse.token;
+
+        // Send token + order data to backend
+        await axiosInstance.post("https://dept-store-backend.vercel.app/payment", {
+          fullName,
+          address,
+          phoneNumber,
+          paymentMethod,
+          paymentStatus: "Pending",
+          total,
+          orderData,
+          token: paymentToken,
+        });
+
+        toast.success("Payment successful! Order placed.");
+        const emptyCart = {};
+        Object.keys(cartItems).forEach((id) => (emptyCart[id] = 0));
+        setCartItems(emptyCart);
       }
     } catch (err) {
       console.error("Error placing order:", err);
