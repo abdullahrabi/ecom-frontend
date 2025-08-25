@@ -16,7 +16,9 @@ const ShopContextProvider = (props) => {
   const [all_product, setAll_Product] = useState([]);
   const [cartItems, setCartItems] = useState(getDefaultCart());
   const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState(localStorage.getItem("token") || sessionStorage.getItem("token"));
+  const [token, setToken] = useState(
+    localStorage.getItem("token") || sessionStorage.getItem("token")
+  );
 
   // Axios instance with token
   const axiosInstance = axios.create();
@@ -39,7 +41,9 @@ const ShopContextProvider = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await axios.get("https://dept-store-backend.vercel.app/allproducts");
+        const { data } = await axios.get(
+          "https://dept-store-backend.vercel.app/allproducts"
+        );
         setAll_Product(data);
 
         if (token) {
@@ -64,10 +68,13 @@ const ShopContextProvider = (props) => {
     if (!token) return;
 
     try {
-      await axiosInstance.post("https://dept-store-backend.vercel.app/addtocart", {
-        itemId,
-        quantity: 1,
-      });
+      await axiosInstance.post(
+        "https://dept-store-backend.vercel.app/addtocart",
+        {
+          itemId,
+          quantity: 1,
+        }
+      );
     } catch (err) {
       console.error(err);
     }
@@ -78,10 +85,13 @@ const ShopContextProvider = (props) => {
     if (!token) return;
 
     try {
-      await axiosInstance.post("https://dept-store-backend.vercel.app/updatecart", {
-        itemId,
-        quantity,
-      });
+      await axiosInstance.post(
+        "https://dept-store-backend.vercel.app/updatecart",
+        {
+          itemId,
+          quantity,
+        }
+      );
     } catch (err) {
       console.error(err);
     }
@@ -95,10 +105,13 @@ const ShopContextProvider = (props) => {
     if (!token) return;
 
     try {
-      await axiosInstance.post("https://dept-store-backend.vercel.app/removetocart", {
-        itemId,
-        removeCompletely,
-      });
+      await axiosInstance.post(
+        "https://dept-store-backend.vercel.app/removetocart",
+        {
+          itemId,
+          removeCompletely,
+        }
+      );
     } catch (err) {
       console.error(err);
     }
@@ -115,9 +128,16 @@ const ShopContextProvider = (props) => {
     return total;
   };
 
-  const getTotalCartItems = () => Object.values(cartItems).reduce((acc, qty) => acc + qty, 0);
+  const getTotalCartItems = () =>
+    Object.values(cartItems).reduce((acc, qty) => acc + qty, 0);
 
-  const placeOrder = async ({ fullName, address, phoneNumber, paymentMethod, cardData }) => {
+  const placeOrder = async ({
+    fullName,
+    address,
+    phoneNumber,
+    paymentMethod,
+    cardData,
+  }) => {
     if (!fullName || !address || !phoneNumber) {
       toast.error("Please fill all fields");
       return;
@@ -137,7 +157,10 @@ const ShopContextProvider = (props) => {
       })
       .filter((item) => item !== null);
 
-    const total = orderData.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    const total = orderData.reduce(
+      (acc, item) => acc + item.price * item.quantity,
+      0
+    );
 
     if (total <= 0) {
       toast.error("Your cart is empty");
@@ -151,15 +174,18 @@ const ShopContextProvider = (props) => {
 
     try {
       if (paymentMethod === "Cash on Delivery") {
-        await axiosInstance.post("https://dept-store-backend.vercel.app/create-order", {
-          fullName,
-          address,
-          phoneNumber,
-          paymentMethod,
-          paymentStatus: "Pending",
-          total,
-          orderData,
-        });
+        await axiosInstance.post(
+          "https://dept-store-backend.vercel.app/create-order",
+          {
+            fullName,
+            address,
+            phoneNumber,
+            paymentMethod,
+            paymentStatus: "Pending",
+            total,
+            orderData,
+          }
+        );
 
         toast.success("Order Placed Successfully!");
         const emptyCart = {};
@@ -171,24 +197,47 @@ const ShopContextProvider = (props) => {
           return;
         }
 
-        // Load 2Pay.js (must be included in index.html: <script src="https://2pay-js.2checkout.com/v1/2pay.js"></script>)
-        const twoPay = window.TwoPayClient(process.env.REACT_APP_2CHECKOUT_PUBLISHABLE_KEY);
+        // ✅ Initialize 2Pay.js with publishable key
+        const twoPayClient = new window.TwoPayClient(
+          process.env.REACT_APP_2CHECKOUT_PUBLISHABLE_KEY
+        );
 
-        // Create token with card data
-        const tokenResponse = await twoPay.tokens.create(cardData);
+        // ✅ Create token with card data
+        const tokenResponse = await twoPayClient.tokenize({
+          sellerId: process.env.REACT_APP_2CHECKOUT_SELLER_ID, // must be set in .env
+          publishableKey: process.env.REACT_APP_2CHECKOUT_PUBLISHABLE_KEY,
+          ccNo: cardData.cardNumber,
+          cvv: cardData.cvv,
+          expMonth: cardData.expMonth,
+          expYear: cardData.expYear,
+          billingAddr: {
+            name: fullName,
+            addrLine1: address,
+            city: cardData.city,
+            state: cardData.state,
+            zipCode: cardData.zip,
+            country: cardData.country,
+            email: cardData.email,
+            phoneNumber,
+          },
+        });
+
         const paymentToken = tokenResponse.token;
 
-        // Send token + order data to backend
-        await axiosInstance.post("https://dept-store-backend.vercel.app/api/auth/payment", {
-          fullName,
-          address,
-          phoneNumber,
-          paymentMethod,
-          paymentStatus: "Pending",
-          total,
-          orderData,
-          token: paymentToken,
-        });
+        // ✅ Send token + order data to backend
+        await axiosInstance.post(
+          "https://dept-store-backend.vercel.app/api/auth/payment",
+          {
+            fullName,
+            address,
+            phoneNumber,
+            paymentMethod,
+            paymentStatus: "Pending",
+            total,
+            orderData,
+            token: paymentToken,
+          }
+        );
 
         toast.success("Payment successful! Order placed.");
         const emptyCart = {};
@@ -197,7 +246,9 @@ const ShopContextProvider = (props) => {
       }
     } catch (err) {
       console.error("Error placing order:", err);
-      toast.error(err.response?.data?.message || "Failed to place order. Please try again.");
+      toast.error(
+        err.response?.data?.message || "Failed to place order. Please try again."
+      );
     }
   };
 
