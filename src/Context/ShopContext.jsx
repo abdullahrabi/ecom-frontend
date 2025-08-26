@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+/* global Safepay */
 
 export const ShopContext = createContext(null);
 
