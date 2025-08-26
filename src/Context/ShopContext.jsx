@@ -182,7 +182,7 @@ const ShopContextProvider = (props) => {
         Object.keys(cartItems).forEach((id) => (emptyCart[id] = 0));
         setCartItems(emptyCart);
       } else if (paymentMethod === "Card") {
-        // ✅ Call backend to create hosted checkout session
+        // ✅ Call backend to create Safepay session
         const res = await axiosInstance.post(
           "https://dept-store-backend.vercel.app/api/auth/payment",
           {
@@ -195,8 +195,15 @@ const ShopContextProvider = (props) => {
           }
         );
 
-        if (res.data.checkoutUrl) {
-          window.location.href = res.data.checkoutUrl; // redirect user to 2Checkout Hosted Checkout
+        if (res.data.sessionToken) {
+          // ✅ Open Safepay checkout
+          Safepay.checkout({
+            environment: "sandbox", // switch to "production" later
+            session_id: res.data.sessionToken,
+            config: {
+              key: process.env.SAFE_PAY_PUBLIC_KEY, // 👈 use your public key
+            },
+          });
         } else {
           toast.error("Failed to initiate payment");
         }
