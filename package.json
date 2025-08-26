@@ -18,6 +18,7 @@
     "react-scroll-parallax": "^3.4.5",
     "react-toastify": "^11.0.2",
     "react-turnstile": "^1.1.4",
+    "safepay": "^0.0.2",
     "tnotification": "^0.2.1",
     "web-vitals": "^2.1.4"
   },

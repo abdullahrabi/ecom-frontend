@@ -62,7 +62,8 @@ const ShopContextProvider = (props) => {
     };
 
     fetchData();
-  }, [token]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]); // axiosInstance is recreated; suppressing to keep your structure unchanged
 
   const addToCart = async (itemId) => {
     setCartItems((prev) => ({ ...prev, [itemId]: (prev[itemId] || 0) + 1 }));
@@ -183,7 +184,6 @@ const ShopContextProvider = (props) => {
         Object.keys(cartItems).forEach((id) => (emptyCart[id] = 0));
         setCartItems(emptyCart);
       } else if (paymentMethod === "Card") {
-        // ✅ Call backend to create Safepay session
         const res = await axiosInstance.post(
           "https://dept-store-backend.vercel.app/api/auth/payment",
           {
@@ -196,26 +196,33 @@ const ShopContextProvider = (props) => {
           }
         );
 
-        if (res.data.sessionToken) {
-          // ✅ Open Safepay checkout
-          Safepay.checkout({
-            environment: "sandbox", // switch to "production" later
-            session_id: res.data.sessionToken,
-            config: {
-              key: process.env.SAFE_PAY_PUBLIC_KEY, // 👈 use your public key
-            },
-          });
+        if (res?.data?.sessionToken) {
+          if (typeof window !== "undefined" && typeof Safepay !== "undefined") {
+            // ✅ Open Safepay checkout widget
+            Safepay.checkout({
+              environment: "sandbox", // switch to "production" when live
+              session_id: res.data.sessionToken,
+              config: {
+                key: process.env.REACT_APP_SAFE_PAY_PUBLIC_KEY, // from .env
+              },
+            });
+          } else {
+            toast.error("Payment SDK not loaded. Please refresh and try again.");
+            console.error("Safepay SDK is not available on window.");
+          }
         } else {
-          toast.error("Failed to initiate payment");
+          toast.error(res?.data?.message || "Failed to initiate payment");
         }
+      } else {
+        toast.error("Please select a payment method");
       }
     } catch (err) {
-      console.error("Error placing order:", err);
+      console.error("Error placing order / Safepay Checkout Error:", err);
       toast.error(
-        err.response?.data?.message || "Failed to place order. Please try again."
+        err?.response?.data?.message || "Failed to place order. Please try again."
       );
     }
-  };
+  }; // ← correctly closes placeOrder
 
   return (
     <ShopContext.Provider
