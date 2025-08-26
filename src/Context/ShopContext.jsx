@@ -197,18 +197,37 @@ const ShopContextProvider = (props) => {
         );
 
         if (res?.data?.sessionToken) {
-          if (typeof window !== "undefined" && typeof Safepay !== "undefined") {
-            // ✅ Open Safepay checkout widget
+          // Helper: load Safepay SDK if missing
+          const ensureSafepayLoaded = () =>
+            new Promise((resolve, reject) => {
+              if (
+                typeof window !== "undefined" &&
+                typeof window.Safepay !== "undefined"
+              ) {
+                return resolve(window.Safepay);
+              }
+              const script = document.createElement("script");
+              script.src = "https://cdn.getsafepay.com/v1/sdk.js";
+              script.async = true;
+              script.onload = () => resolve(window.Safepay);
+              script.onerror = () =>
+                reject(new Error("Failed to load Safepay SDK"));
+              document.body.appendChild(script);
+            });
+
+          try {
+            const Safepay = await ensureSafepayLoaded();
+
             Safepay.checkout({
-              environment: "sandbox", // switch to "production" when live
+              environment: "sandbox", // change to "production" when live
               session_id: res.data.sessionToken,
               config: {
                 key: process.env.REACT_APP_SAFE_PAY_PUBLIC_KEY, // from .env
               },
             });
-          } else {
-            toast.error("Payment SDK not loaded. Please refresh and try again.");
-            console.error("Safepay SDK is not available on window.");
+          } catch (err) {
+            console.error("Safepay SDK load error:", err);
+            toast.error("Failed to load payment SDK. Please try again.");
           }
         } else {
           toast.error(res?.data?.message || "Failed to initiate payment");
@@ -222,7 +241,7 @@ const ShopContextProvider = (props) => {
         err?.response?.data?.message || "Failed to place order. Please try again."
       );
     }
-  }; // ← correctly closes placeOrder
+  };
 
   return (
     <ShopContext.Provider
