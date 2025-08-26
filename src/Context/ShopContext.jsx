@@ -1,7 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-/* global Safepay */
 
 export const ShopContext = createContext(null);
 
@@ -62,8 +61,7 @@ const ShopContextProvider = (props) => {
     };
 
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]); // axiosInstance is recreated; suppressing to keep your structure unchanged
+  }, [token]);
 
   const addToCart = async (itemId) => {
     setCartItems((prev) => ({ ...prev, [itemId]: (prev[itemId] || 0) + 1 }));
@@ -124,12 +122,7 @@ const ShopContextProvider = (props) => {
   const getTotalCartItems = () =>
     Object.values(cartItems).reduce((acc, qty) => acc + qty, 0);
 
-  const placeOrder = async ({
-    fullName,
-    address,
-    phoneNumber,
-    paymentMethod,
-  }) => {
+  const placeOrder = async ({ fullName, address, phoneNumber, paymentMethod }) => {
     if (!fullName || !address || !phoneNumber) {
       toast.error("Please fill all fields");
       return;
@@ -183,6 +176,7 @@ const ShopContextProvider = (props) => {
         const emptyCart = {};
         Object.keys(cartItems).forEach((id) => (emptyCart[id] = 0));
         setCartItems(emptyCart);
+
       } else if (paymentMethod === "Card") {
         const res = await axiosInstance.post(
           "https://dept-store-backend.vercel.app/api/auth/payment",
@@ -196,47 +190,18 @@ const ShopContextProvider = (props) => {
           }
         );
 
-        if (res?.data?.sessionToken) {
-          // Helper: load Safepay SDK if missing
-          const ensureSafepayLoaded = () =>
-            new Promise((resolve, reject) => {
-              if (
-                typeof window !== "undefined" &&
-                typeof window.Safepay !== "undefined"
-              ) {
-                return resolve(window.Safepay);
-              }
-              const script = document.createElement("script");
-              script.src = "https://cdn.getsafepay.com/v1/sdk.js";
-              script.async = true;
-              script.onload = () => resolve(window.Safepay);
-              script.onerror = () =>
-                reject(new Error("Failed to load Safepay SDK"));
-              document.body.appendChild(script);
-            });
-
-          try {
-            const Safepay = await ensureSafepayLoaded();
-
-            Safepay.checkout({
-              environment: "sandbox", // change to "production" when live
-              session_id: res.data.sessionToken,
-              config: {
-                key: process.env.REACT_APP_SAFE_PAY_PUBLIC_KEY, // from .env
-              },
-            });
-          } catch (err) {
-            console.error("Safepay SDK load error:", err);
-            toast.error("Failed to load payment SDK. Please try again.");
-          }
+        if (res?.data?.token && res?.data?.url) {
+          // Open SafePay checkout page in a new tab
+          window.open(res.data.url, "_blank");
         } else {
           toast.error(res?.data?.message || "Failed to initiate payment");
         }
+
       } else {
         toast.error("Please select a payment method");
       }
     } catch (err) {
-      console.error("Error placing order / Safepay Checkout Error:", err);
+      console.error("Error placing order / SafePay Checkout Error:", err);
       toast.error(
         err?.response?.data?.message || "Failed to place order. Please try again."
       );
