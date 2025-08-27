@@ -1,6 +1,8 @@
 import React, { createContext, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { loadStripe } from "@stripe/stripe-js";
+import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
 
 export const ShopContext = createContext(null);
 
@@ -19,6 +21,10 @@ const ShopContextProvider = (props) => {
   const [token, setToken] = useState(
     localStorage.getItem("token") || sessionStorage.getItem("token")
   );
+
+  // Stripe hooks (Payment Intents flow)
+  const stripe = useStripe();
+  const elements = useElements();
 
   // Axios instance with token
   const axiosInstance = axios.create();
@@ -178,31 +184,54 @@ const ShopContextProvider = (props) => {
         setCartItems(emptyCart);
 
       } else if (paymentMethod === "Card") {
-        const res = await axiosInstance.post(
+        // ✅ Payment Intents Flow
+        const { data } = await axiosInstance.post(
           "https://dept-store-backend.vercel.app/api/auth/payment",
           {
             fullName,
             address,
             phoneNumber,
-            paymentMethod,
-            total,
             orderData,
+            total,
           }
         );
 
-        // Redirect user to AbhiPay payment page
-        const { paymentUrl } = res.data;
-        if (paymentUrl) {
-          window.location.href = paymentUrl;
-        } else {
+        if (!data.clientSecret) {
           toast.error("Failed to initiate payment.");
+          return;
+        }
+
+        if (!stripe || !elements) {
+          toast.error("Stripe not initialized");
+          return;
+        }
+
+        const result = await stripe.confirmCardPayment(data.clientSecret, {
+          payment_method: {
+            card: elements.getElement(CardElement),
+            billing_details: {
+              name: fullName,
+              phone: phoneNumber,
+              address: { line1: address },
+            },
+          },
+        });
+
+        if (result.error) {
+          toast.error(result.error.message);
+        } else if (result.paymentIntent.status === "succeeded") {
+          toast.success("Payment successful!");
+
+          const emptyCart = {};
+          Object.keys(cartItems).forEach((id) => (emptyCart[id] = 0));
+          setCartItems(emptyCart);
         }
 
       } else {
         toast.error("Please select a payment method");
       }
     } catch (err) {
-      console.error("Error placing order / AbhiPay Checkout Error:", err);
+      console.error("Error placing order / Stripe Payment Error:", err);
       toast.error(
         err?.response?.data?.message || "Failed to place order. Please try again."
       );
