@@ -178,33 +178,14 @@ const ShopContextProvider = (props) => {
         setCartItems(emptyCart);
 
       } else if (paymentMethod === "Card") {
-        const res = await axiosInstance.post(
-          "https://dept-store-backend.vercel.app/api/auth/payment",
-          {
-            fullName,
-            address,
-            phoneNumber,
-            paymentMethod,
-            total,
-            orderData,
-          }
-        );
+        
 
-        if (res?.data?.token && res?.data?.url) {
-          // Open SafePay checkout page in a new tab
-          window.open(res.data.url, "_blank");
-        } else {
-          toast.error(res?.data?.message || "Failed to initiate payment");
-        }
-
-      } else {
-        toast.error("Please select a payment method");
-      }
+       
+      } 
     } catch (err) {
-      console.error("Error placing order / SafePay Checkout Error:", err);
-      toast.error(
-        err?.response?.data?.message || "Failed to place order. Please try again."
-      );
+    
+     
+      
     }
   };
 
