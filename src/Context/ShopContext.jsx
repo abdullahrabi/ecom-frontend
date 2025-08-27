@@ -192,6 +192,7 @@ const ShopContextProvider = (props) => {
             total,
           }
         );
+        return data;
 
        
         
