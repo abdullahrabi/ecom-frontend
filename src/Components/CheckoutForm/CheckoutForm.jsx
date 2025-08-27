@@ -6,11 +6,17 @@ import { toast } from "react-toastify";
 
 const CheckoutForm = () => {
   const [paymentMethod, setPaymentMethod] = useState("Cash on Delivery");
-  const { placeOrder } = useContext(ShopContext);
+  const { placeOrder, cartItems, setCartItems } = useContext(ShopContext);
 
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
+
+  const clearCart = () => {
+    const emptyCart = {};
+    Object.keys(cartItems).forEach((id) => (emptyCart[id] = 0));
+    setCartItems(emptyCart);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,7 +25,7 @@ const CheckoutForm = () => {
     const phoneNumber = e.target.phone.value;
 
     if (paymentMethod === "Cash on Delivery") {
-      placeOrder({ fullName, address, phoneNumber, paymentMethod });
+      await placeOrder({ fullName, address, phoneNumber, paymentMethod });
       return;
     }
 
@@ -32,7 +38,6 @@ const CheckoutForm = () => {
       setLoading(true);
 
       try {
-        // Step 1: Ask backend for clientSecret
         const res = await placeOrder({
           fullName,
           address,
@@ -58,6 +63,7 @@ const CheckoutForm = () => {
           toast.error(result.error.message);
         } else if (result.paymentIntent.status === "succeeded") {
           toast.success("Payment successful 🎉 Order placed!");
+          clearCart(); // Clear cart after successful Card payment
         }
       } catch (err) {
         console.error(err);
@@ -111,14 +117,15 @@ const CheckoutForm = () => {
             Card
           </label>
         </div>
-      {paymentMethod === "Card" && (
-        <label>
-          Card Details
-          <div className="card-element-box">
-          <CardElement options={{ hidePostalCode: true }} />
-          </div>
-        </label>
-      )}
+
+        {paymentMethod === "Card" && (
+          <label>
+            Card Details
+            <div className="card-element-box">
+              <CardElement options={{ hidePostalCode: true }} />
+            </div>
+          </label>
+        )}
 
         <button type="submit" className="submit-btn" disabled={loading}>
           {loading ? "Processing..." : "Place Order"}

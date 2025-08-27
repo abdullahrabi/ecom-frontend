@@ -193,13 +193,6 @@ const ShopContextProvider = (props) => {
           }
         );
         return data;
-
-       
-        
-
-       
-         
-
       } else {
         toast.error("Please select a payment method");
       }
