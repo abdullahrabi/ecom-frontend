@@ -11,7 +11,7 @@ import { Elements } from '@stripe/react-stripe-js';
 
 // Load publishable key from env
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
-console.log("Stripe ENV Key:", process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
+
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
