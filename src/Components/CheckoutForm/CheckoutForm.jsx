@@ -68,7 +68,7 @@ const CheckoutForm = () => {
         } else if (result.paymentIntent.status === "succeeded") {
           toast.success("Payment successful 🎉 Order placed!");
           clearCart(); // Clear cart after successful Card payment
-          navigate('/'); // Navigate to homepage
+          navigate("/"); // Navigate to homepage
         }
       } catch (err) {
         console.error(err);
