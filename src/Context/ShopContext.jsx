@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+
 
 
 export const ShopContext = createContext(null);
@@ -15,6 +15,7 @@ const getDefaultCart = () => {
 };
 
 const ShopContextProvider = (props) => {
+
   const [all_product, setAll_Product] = useState([]);
   const [cartItems, setCartItems] = useState(getDefaultCart());
   const [loading, setLoading] = useState(true);
@@ -179,7 +180,7 @@ const ShopContextProvider = (props) => {
         const emptyCart = {};
         Object.keys(cartItems).forEach((id) => (emptyCart[id] = 0));
         setCartItems(emptyCart);
-        navigate('/'); // Navigate to homepage after COD order
+        
 
       } else if (paymentMethod === "Card") {
         // ✅ Payment Intents Flow

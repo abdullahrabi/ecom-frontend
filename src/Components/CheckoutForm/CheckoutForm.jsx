@@ -29,6 +29,7 @@ const CheckoutForm = () => {
     if (paymentMethod === "Cash on Delivery") {
       await placeOrder({ fullName, address, phoneNumber, paymentMethod });
       clearCart();
+      navigate("/"); // Navigate to homepage after COD order
       return;
     }
 
