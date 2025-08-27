@@ -77,3 +77,22 @@
   width: 18px;   /* optional: make radio slightly bigger */
   height: 18px;
 }
+.card-element-box {
+  margin-top: 6px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #fff;
+}
+
+.card-element-box .StripeElement {
+  width: 100%;
+}
+.card-element-box.StripeElement--invalid {
+  border-color: #e74c3c; /* red when card details are invalid */
+}
+
+.card-element-box.StripeElement--complete {
+  border-color: #2ecc71; /* green when card details are valid */
+}

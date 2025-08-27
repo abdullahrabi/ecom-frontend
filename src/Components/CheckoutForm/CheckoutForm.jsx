@@ -111,12 +111,14 @@ const CheckoutForm = () => {
             Card
           </label>
         </div>
-
-        {paymentMethod === "Card" && (
+      {paymentMethod === "Card" && (
+        <label>
+          Card Details
           <div className="card-element-box">
-            <CardElement />
+          <CardElement options={{ hidePostalCode: true }} />
           </div>
-        )}
+        </label>
+      )}
 
         <button type="submit" className="submit-btn" disabled={loading}>
           {loading ? "Processing..." : "Place Order"}
