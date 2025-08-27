@@ -3,6 +3,7 @@ import './CheckoutForm.css';
 import { ShopContext } from '../../Context/ShopContext';
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const CheckoutForm = () => {
   const [paymentMethod, setPaymentMethod] = useState("Cash on Delivery");
@@ -11,6 +12,7 @@ const CheckoutForm = () => {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const clearCart = () => {
     const emptyCart = {};
@@ -26,6 +28,7 @@ const CheckoutForm = () => {
 
     if (paymentMethod === "Cash on Delivery") {
       await placeOrder({ fullName, address, phoneNumber, paymentMethod });
+      clearCart();
       return;
     }
 
@@ -64,6 +67,7 @@ const CheckoutForm = () => {
         } else if (result.paymentIntent.status === "succeeded") {
           toast.success("Payment successful 🎉 Order placed!");
           clearCart(); // Clear cart after successful Card payment
+          navigate('/'); // Navigate to homepage
         }
       } catch (err) {
         console.error(err);
