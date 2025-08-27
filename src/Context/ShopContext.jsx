@@ -178,14 +178,34 @@ const ShopContextProvider = (props) => {
         setCartItems(emptyCart);
 
       } else if (paymentMethod === "Card") {
-        
+        const res = await axiosInstance.post(
+          "https://dept-store-backend.vercel.app/api/auth/payment",
+          {
+            fullName,
+            address,
+            phoneNumber,
+            paymentMethod,
+            total,
+            orderData,
+          }
+        );
 
-       
-      } 
+        // Redirect user to AbhiPay payment page
+        const { paymentUrl } = res.data;
+        if (paymentUrl) {
+          window.location.href = paymentUrl;
+        } else {
+          toast.error("Failed to initiate payment.");
+        }
+
+      } else {
+        toast.error("Please select a payment method");
+      }
     } catch (err) {
-    
-     
-      
+      console.error("Error placing order / AbhiPay Checkout Error:", err);
+      toast.error(
+        err?.response?.data?.message || "Failed to place order. Please try again."
+      );
     }
   };
 
