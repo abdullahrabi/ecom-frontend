@@ -15,7 +15,7 @@ const OrderHistory = () => {
           return;
         }
 
-        const response = await axios.get('https://dept-store-backend.vercel.app/api/orders/history', {
+        const response = await axios.get('https://dept-store-backend.vercel.app/api/auth/order-history', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
