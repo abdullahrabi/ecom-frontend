@@ -45,7 +45,7 @@
   left: 0;
   width: 100%;
   max-height: 250px;
-  
+  overflow-y: auto;
   border: 1px solid #ccc;
   border-radius: 40px; /* rounded bottom corners */
   background-color: #f8f8f8;
