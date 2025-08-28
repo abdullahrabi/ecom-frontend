@@ -7,47 +7,55 @@ import logout_icon from '../Assests/logout_icon.png';
 import { Link, useLocation } from 'react-router-dom';
 import { ShopContext } from '../../Context/ShopContext';
 import SearchBar from '../SearchBar/SearchBar';
-import { toast } from 'react-toastify'; // Import toast
+import { toast } from 'react-toastify';
+import axios from 'axios';
 
 const Navbar = () => {
   const [menu, setMenu] = useState("Home");
   const { getTotalCartItems } = useContext(ShopContext);
   const location = useLocation();
 
-  // Update the menu state based on the current pathname
+  const [orderHistory, setOrderHistory] = useState([]);
+  const [showOrders, setShowOrders] = useState(false);
+
   useEffect(() => {
     const currentPath = location.pathname;
-    if (currentPath === '/') {
-      setMenu("Home");
-    } else if (currentPath === '/Grocery') {
-      setMenu("Grocery");
-    } else if (currentPath === '/Electronics') {
-      setMenu("Electronics");
-    } else if (currentPath === '/Perfume') {
-      setMenu("Perfume");
-    } else if (currentPath === '/Makeup') {
-      setMenu("Makeup");
-    } else if (currentPath === '/Skincare') {
-      setMenu("Skincare");
-    } else if (currentPath === '/Fruits_Vegetables') {
-      setMenu("Fruits_Vegetables");
-    }
+    if (currentPath === '/') setMenu("Home");
+    else if (currentPath === '/Grocery') setMenu("Grocery");
+    else if (currentPath === '/Electronics') setMenu("Electronics");
+    else if (currentPath === '/Perfume') setMenu("Perfume");
+    else if (currentPath === '/Makeup') setMenu("Makeup");
+    else if (currentPath === '/Skincare') setMenu("Skincare");
+    else if (currentPath === '/Fruits_Vegetables') setMenu("Fruits_Vegetables");
   }, [location]);
 
-  // Check if the user is logged in based on the token in localStorage or sessionStorage
   const isLoggedIn = () => {
     return localStorage.getItem('token') || sessionStorage.getItem('token');
   };
 
-  // Handle logout
+  // Fetch order history if logged in
+  useEffect(() => {
+    if (isLoggedIn()) {
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      axios.get("http://localhost:5000/api/orders/history", {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then(res => {
+        setOrderHistory(res.data.orders || []);
+      })
+      .catch(() => {
+        setOrderHistory([]);
+      });
+    }
+  }, []);
+
   const handleLogout = () => {
-    // Remove token from both storage options
     localStorage.removeItem('token');
     sessionStorage.removeItem('token'); 
-    toast.success("Logout successful!"); // Show logout success toast
+    toast.success("Logout successful!");
     setTimeout(() => {
-      window.location.replace('/'); // Redirect to homepage after 1 second
-    }, 1000); // Adding a slight delay to allow the toast to show
+      window.location.replace('/');
+    }, 1000);
   };
 
   return (
@@ -63,18 +71,42 @@ const Navbar = () => {
         <SearchBar />
         <div className="nav-login-cart">
           {isLoggedIn() ? (
-            // Show logout icon if user is logged in
             <img src={logout_icon} alt="Logout Icon" onClick={handleLogout} />
           ) : (
-            // Show login icon if user is logged out
             <Link to="/login">
               <img src={login_icon} alt="Login Icon" />
             </Link>
           )}
-          <Link to="/cart">
-            <img src={cart_icon} alt="Cart Icon" />
-          </Link>
-          <div className="nav-cart-count">{getTotalCartItems()}</div>
+
+          <div 
+            className="cart-container"
+            onMouseEnter={() => setShowOrders(true)}
+            onMouseLeave={() => setShowOrders(false)}
+          >
+            <Link to="/cart">
+              <img src={cart_icon} alt="Cart Icon" />
+            </Link>
+            <div className="nav-cart-count">{getTotalCartItems()}</div>
+
+            {/* Dropdown for order history */}
+            {isLoggedIn() && showOrders && (
+              <div className="order-history-dropdown">
+                <h4>Your Orders</h4>
+                {orderHistory.length > 0 ? (
+                  <ul>
+                    {orderHistory.slice(0, 5).map((order, index) => (
+                      <li key={index}>
+                        #{order._id.slice(-6)} - {order.items.length} items
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No orders found</p>
+                )}
+                <Link to="/order-history" className="view-all-link">View All</Link>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

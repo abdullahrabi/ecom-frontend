@@ -134,6 +134,55 @@ body, html {
     display: none;
 
 }
+.cart-container {
+  position: relative;
+  display: inline-block;
+}
+
+.order-history-dropdown {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  width: 220px;
+  background: #fff;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  padding: 10px;
+  z-index: 100;
+}
+
+.order-history-dropdown h4 {
+  font-size: 14px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+}
+
+.order-history-dropdown ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.order-history-dropdown li {
+  font-size: 13px;
+  padding: 5px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.order-history-dropdown li:last-child {
+  border-bottom: none;
+}
+
+.order-history-dropdown .view-all-link {
+  display: block;
+  text-align: center;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #007bff;
+  text-decoration: none;
+}
 
 @media(max-width: 1280px) {
     .navbar {
