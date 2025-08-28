@@ -77,10 +77,7 @@ const OrderHistory = () => {
                   <td><strong>Email:</strong></td>
                   <td>{order.email}</td>
                 </tr>
-                <tr>
-                  <td><strong>User ID:</strong></td>
-                  <td>{order.userId}</td>
-                </tr>
+              
                 <tr>
                   <td><strong>Full Name:</strong></td>
                   <td>{order.fullName}</td>
@@ -105,10 +102,7 @@ const OrderHistory = () => {
                   <td><strong>Total:</strong></td>
                   <td>PKR {order.total}</td>
                 </tr>
-                <tr>
-                  <td><strong>Payment Intent ID:</strong></td>
-                  <td>{order.paymentIntentId || "N/A"}</td>
-                </tr>
+               
                 <tr>
                   <td><strong>Date:</strong></td>
                   <td>{new Date(order.date).toLocaleString()}</td>
