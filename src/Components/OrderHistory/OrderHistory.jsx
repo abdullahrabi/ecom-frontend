@@ -17,11 +17,14 @@ const OrderHistory = () => {
           return;
         }
 
-        const response = await axios.get("https://dept-store-backend.vercel.app/api/auth/order-history", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.get(
+          "https://dept-store-backend.vercel.app/api/auth/order-history",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (response.data && Array.isArray(response.data.orders)) {
           setOrders(response.data.orders);
@@ -115,7 +118,7 @@ const OrderHistory = () => {
 
             {/* ================= ORDER ITEMS ================= */}
             <h4>Items</h4>
-            {order.items && order.items.length > 0 ? (
+            {Array.isArray(order.items) && order.items.length > 0 ? (
               <table
                 style={{
                   width: "100%",
