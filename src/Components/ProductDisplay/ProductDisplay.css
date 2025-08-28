@@ -1,6 +1,6 @@
 .productdisplay {
     display: flex;
-    gap: 200px;         /* spacing between left and right sections */
+    gap: 220px;         /* spacing between left and right sections */
     margin: 0 170px;   /* horizontal margin only */
 }
 
@@ -109,6 +109,7 @@
 /* Add to Cart Button */
 .productdisplay-right button {
     margin-top: 10px;
+    margin-left: 10px;
     padding: 20px 20px;
     width: 250px;
     font-size: 16px;
