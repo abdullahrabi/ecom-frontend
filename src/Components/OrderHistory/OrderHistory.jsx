@@ -9,7 +9,7 @@ const OrderHistory = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("token")|| sessionStorage.getItem("token");
         const response = await axios.get("https://dept-store-backend.vercel.app/api/auth/order-history", {
           headers: {
             Authorization: `Bearer ${token}`,
