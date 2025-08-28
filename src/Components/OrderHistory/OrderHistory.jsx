@@ -118,7 +118,7 @@ const OrderHistory = () => {
 
             {/* ================= ORDER ITEMS ================= */}
             <h4>Items</h4>
-            {Array.isArray(order.items) && order.items.length > 0 ? (
+            {order.orderData && order.orderData.length > 0 ?(
               <table
                 style={{
                   width: "100%",
@@ -136,7 +136,7 @@ const OrderHistory = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {order.items.map((item, idx) => (
+                  {order.orderData.map((item, idx) => (
                     <tr key={idx}>
                       <td style={{ padding: "8px" }}>{item.productId}</td>
                       <td style={{ padding: "8px" }}>{item.name}</td>
