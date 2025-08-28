@@ -108,3 +108,28 @@
     cursor: pointer;
     border-radius: 50px;
 }
+/* Quantity selector container */
+.productdisplay-right-quantity {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center; /* center align with other elements */
+    margin-bottom: 20px; /* spacing below input */
+}
+
+/* Quantity input field */
+.productdisplay-right-quantity input {
+    width: 60px;           /* same as cart input */
+    padding: 5px 10px;     /* some padding for better click area */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 16px;
+}
+
+/* Quantity label */
+.productdisplay-right-quantity label {
+    font-size: 16px;
+    color: #3d3d3d;
+    font-weight: 500;
+}
