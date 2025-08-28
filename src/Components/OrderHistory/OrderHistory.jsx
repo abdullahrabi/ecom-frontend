@@ -10,7 +10,7 @@ const OrderHistory = () => {
     const fetchOrders = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:5000/api/orders/history", {
+        const response = await axios.get("https://dept-store-backend.vercel.app/api/auth/order-history", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
