@@ -4,6 +4,7 @@
   margin: 0 auto;
   padding-top: 0px;
   align-items: center;
+  position: relative; /* Needed for absolute suggestions dropdown */
 }
 
 .search-bar {
@@ -14,7 +15,6 @@
   padding: 10px;
   width: 100%;
   background: linear-gradient(to left, green 10%, white 10%) right;
-  
 }
 
 .search-input {
@@ -30,97 +30,120 @@
 .search-bar-container img {
   width: 40px;
   cursor: pointer;
-
 }
 
 .search-bar-container img:hover {
   transform: scale(1.1);
 }
 
-@media (max-width: 1280px) {
-  .search-bar-container {
-    max-width: 500px;
-   align-items: center;
-    
-  }
-}
+/* Suggestions dropdown */
 .suggestions-list {
   border: 1px solid #ccc;
   border-top: none;
-  max-height: 200px;
+  max-height: 250px;
   overflow-y: auto;
   list-style: none;
   margin: 0;
   padding: 0;
   background: white;
   position: absolute;
-  width: 100%;
+  top: 100%;
+  left: 0;
+  width: 100%; /* make it match the search-bar width */
   z-index: 1000;
+  box-sizing: border-box;
 }
 
 .suggestions-list li {
-  padding: 8px;
   cursor: pointer;
+  padding: 5px 10px;
 }
 
+/* Each suggestion item */
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.suggestion-image {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.suggestion-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.suggestion-name {
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.suggestion-price {
+  font-size: 0.85rem;
+  color: #555;
+}
+
+/* Hover effect for suggestion item */
 .suggestions-list li:hover {
   background-color: #f0f0f0;
 }
 
+/* Responsive adjustments */
+@media (max-width: 1280px) {
+  .search-bar-container {
+    max-width: 500px;
+  }
+}
 
 @media (max-width: 1024px) {
   .search-bar-container {
     max-width: 450px;
-    align-self: center;
   }
-
   .search-input {
     font-size: 14px;
   }
-
   .search-bar-container img {
     width: 35px;
   }
-  .search-input {
-    font-size: 12px;
-    padding: 10px;
-    width: 80%;
-  }
 }
+
 @media(max-width:800px){
   .search-bar-container {
-    max-width: 40%;
-    max-height: 60%;
+    max-width: 90%; /* better for mobile */
   }
   .search-bar-container img {
-    width: 10%;
+    width: 30px;
   }
 }
 
 @media (max-width: 500px) {
   .search-bar-container {
-    max-width: 40%;
-    max-height: 60%;
-    
-  
+    max-width: 95%;
   }
-
-  .search-bar {
-    padding: 0px;
-    
-  }
-
   .search-input {
     font-size: 12px;
-    padding: 10px;
-    width: 80%;
   }
-
   .search-bar-container img {
-    width: 10%;
-    height: 10%;
-    cursor: pointer;
-   
-
+    width: 25px;
+    height: 25px;
+  }
+  .suggestion-image {
+    width: 30px;
+    height: 30px;
+  }
+  .suggestion-name {
+    font-size: 0.85rem;
+  }
+  .suggestion-price {
+    font-size: 0.75rem;
   }
 }
