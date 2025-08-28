@@ -11,7 +11,7 @@
   display: flex;
   align-items: center;
   background-color: #f8ebe6;
-  border-radius: 40px;
+  border-radius: 40px 40px 0 0;
   padding: 10px 15px;
   width: 100%;
   background: linear-gradient(to left, rgb(11, 102, 35) 10%, white 10%) right;
@@ -47,7 +47,7 @@
   /* Let it grow dynamically, no scroll */
   border: 1px solid #ccc;
   border-radius: 0 0 40px 40px; /* match search bar corners */
-  background-color: #fdfbf5; /* subtle matching color */
+  background-color: #f8ebe6; /* subtle matching color */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   margin: 0;
   padding: 0;
