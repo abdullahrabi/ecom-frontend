@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import './OrderHistory.css';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
@@ -10,29 +9,28 @@ const OrderHistory = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const token =
-          localStorage.getItem('token') || sessionStorage.getItem('token');
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         if (!token) {
-          toast.error('You must be logged in to view your orders');
+          toast.error('User not authenticated!');
           return;
         }
 
-        const response = await axios.get(
-          'https://dept-store-backend.vercel.app/api/auth/order-history',
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const response = await axios.get('http://localhost:5000/api/orders/history', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-        if (response.data.orders && response.data.orders.length > 0) {
+        if (response.data && response.data.orders) {
           setOrders(response.data.orders);
-          toast.success('Order history loaded successfully');
+          toast.success('Order history loaded!');
         } else {
-          toast.info('No orders found');
+          setOrders([]);
+          toast.info('No orders found.');
         }
       } catch (error) {
-        console.error('Error fetching orders:', error);
-        toast.error('Failed to fetch order history');
+        console.error(error);
+        toast.error('Failed to fetch order history.');
       }
     };
 
@@ -41,42 +39,30 @@ const OrderHistory = () => {
 
   return (
     <div className="order-history">
-      <h2>Order History</h2>
-      {orders.length === 0 ? (
-        <p>No orders found.</p>
-      ) : (
-        <div className="orders-list">
-          {orders.map((order, index) => (
-            <div key={index} className="order-card">
-              <h3>Order #{order._id}</h3>
-              <p>
-                <strong>Total:</strong> Rs {order.totalPrice}
-              </p>
-              <p>
-                <strong>Date:</strong>{' '}
-                {new Date(order.createdAt).toLocaleString()}
-              </p>
-              <p>
-                <strong>Payment Method:</strong> {order.paymentMethod}
-              </p>
-              <p>
-                <strong>Payment Status:</strong> {order.paymentStatus}
-              </p>
-
-              <h4>Items:</h4>
-              <ul className="order-items">
-                {order.items.map((item, i) => (
-                  <li key={i} className="order-item">
-                    <span>
-                      <strong>{item.productName}</strong>
-                    </span>{' '}
-                    - Qty: {item.quantity} | Rs {item.total}
-                  </li>
-                ))}
+      <h2>Your Order History</h2>
+      {orders.length > 0 ? (
+        <ul>
+          {orders.map((order) => (
+            <li key={order._id} className="order-item">
+              <h4>Order #{order._id}</h4>
+              <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleDateString()}</p>
+              <p><strong>Total:</strong> Rs {order.totalPrice}</p>
+              <ul>
+                {order.items && order.items.length > 0 ? (
+                  order.items.map((item, idx) => (
+                    <li key={idx}>
+                      {item.productId?.name || 'Unknown Product'} - {item.quantity} pcs
+                    </li>
+                  ))
+                ) : (
+                  <li>No items in this order</li>
+                )}
               </ul>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
+      ) : (
+        <p>No orders found.</p>
       )}
     </div>
   );
