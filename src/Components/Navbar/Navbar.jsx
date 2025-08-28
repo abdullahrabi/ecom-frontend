@@ -92,11 +92,10 @@ const Navbar = () => {
             {isLoggedIn() && showOrders && (
               <div className="order-history-dropdown slide-down">
                 <Link to="/order-history" className="order-history-link">
-                  <div className="order-icon">📦</div>
+                  <div className="order-icon"></div>
                   <div className="order-text">
                     <h4>Order History</h4>
-                    <p>Track your past purchases</p>
-                  </div>
+                    </div>
                 </Link>
               </div>
             )}
