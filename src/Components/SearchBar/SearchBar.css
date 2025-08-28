@@ -14,7 +14,7 @@
   border-radius: 40px;
   padding: 10px 15px;
   width: 100%;
-  background: linear-gradient(to left, green 10%, white 10%) right;
+  background: linear-gradient(to left, #27ae60 10%, white 10%) right;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
@@ -44,12 +44,11 @@
   top: 100%;
   left: 0;
   width: 100%;
-  max-height: 250px;
-  overflow-y: auto;
+  /* Let it grow dynamically, no scroll */
   border: 1px solid #ccc;
-  border-radius: 40px; /* rounded bottom corners */
-  background-color: #f8f8f8;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 0 0 40px 40px; /* match search bar corners */
+  background-color: #fdfbf5; /* subtle matching color */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -57,24 +56,31 @@
   transition: all 0.2s ease-in-out;
 }
 
+/* Each suggestion item */
 .suggestions-list li {
   cursor: pointer;
-  padding: 8px 12px;
+  padding: 10px 15px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  transition: background-color 0.2s;
+  gap: 12px;
+  transition: background-color 0.2s, transform 0.1s;
+  border-bottom: 1px solid #eee;
+}
+
+.suggestions-list li:last-child {
+  border-bottom: none;
 }
 
 .suggestions-list li:hover {
-  background-color: #e4f1e1; /* subtle green highlight on hover */
+  background-color: #e0f2e9; /* subtle green highlight */
+  transform: translateX(2px);
 }
 
 /* Suggestion item layout */
 .suggestion-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   width: 100%;
 }
 
@@ -82,7 +88,7 @@
   width: 45px;
   height: 45px;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 10px;
   flex-shrink: 0;
 }
 
@@ -101,9 +107,10 @@
 }
 
 .suggestion-price {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: #27ae60; /* subtle green for price */
   font-weight: 600;
+  margin-top: 2px;
 }
 
 /* Responsive adjustments */
