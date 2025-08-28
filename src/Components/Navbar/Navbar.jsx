@@ -14,8 +14,6 @@ const Navbar = () => {
   const [menu, setMenu] = useState("Home");
   const { getTotalCartItems } = useContext(ShopContext);
   const location = useLocation();
-
-  const [orderHistory, setOrderHistory] = useState([]);
   const [showOrders, setShowOrders] = useState(false);
 
   useEffect(() => {
