@@ -136,6 +136,32 @@
   font-size: 14px;
   text-align: center;
 }
+/* Align labels and values in order info table */
+.order-info-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.order-info-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 15px;
+  color: #444;
+  vertical-align: middle;   /* Align text vertically */
+}
+
+.order-info-table td:first-child {
+  width: 200px;             /* Fixed width for labels */
+  font-weight: 600;
+  color: #222;
+  white-space: nowrap;      /* Prevent label from breaking */
+}
+
+.order-info-table td:last-child {
+  width: auto;              /* Flexible value column */
+  text-align: left;
+}
 
 /* ================= Responsive ================= */
 @media (max-width: 768px) {
