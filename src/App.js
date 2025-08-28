@@ -10,10 +10,10 @@ import SearchResults from './Pages/SearchResults';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Footer from './Components/Footer/Footer';
-
 import { useEffect } from 'react';
 import Turnstile from 'react-turnstile';
 import CheckoutForm from './Components/CheckoutForm/CheckoutForm';
+import OrderHistory from './Components/OrderHistory/OrderHistory';
 function App() {
   
   return (
@@ -31,7 +31,7 @@ function App() {
           <Route path='/Skincare' element={<ShopCategory category="Skincare" />} />
           <Route path='/Fruits_Vegetables' element={<ShopCategory category="Fruits_Vegetables" />} />
           <Route path="/search" element={<SearchResults />} />
-         
+          <Route path='/order-history' element={<OrderHistory/>} />
           <Route path='/product/:productId' element={<Product />} />
           <Route path='/cart' element={<Cart />} />
           <Route path='/login' element={<LoginSignup />} />
