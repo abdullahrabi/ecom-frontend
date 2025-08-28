@@ -1,102 +1,80 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import "./OrderHistory.css";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const token = localStorage.getItem("token")|| sessionStorage.getItem("token");
-        const response = await axios.get("https://dept-store-backend.vercel.app/api/auth/order-history", {
+        const token =
+          localStorage.getItem("token") || sessionStorage.getItem("token");
+
+        if (!token) {
+          toast.error("Please log in to view your orders.");
+          setLoading(false);
+          return;
+        }
+
+        const response = await fetch("https://dept-store-backend.vercel.app/api/auth/order-history", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        if (response.data.success) {
-          setOrders(response.data.orders);
+        const data = await response.json();
+
+        if (response.ok) {
+          // ✅ Safe check
+          if (data.orders && Array.isArray(data.orders)) {
+            setOrders(data.orders);
+          } else {
+            setOrders([]); // No orders available
+          }
+          toast.success("Orders fetched successfully!");
         } else {
-          toast.error("Failed to fetch orders");
+          toast.error(data.message || "Failed to fetch orders.");
         }
       } catch (error) {
-        console.error(error);
-        toast.error("Error fetching order history");
+        console.error("Error fetching orders:", error);
+        toast.error("Something went wrong. Please try again.");
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchOrders();
   }, []);
 
+  if (loading) return <p>Loading orders...</p>;
+
   return (
     <div className="order-history">
       <h2>Order History</h2>
-
       {orders.length === 0 ? (
         <p>No orders found.</p>
       ) : (
         orders.map((order, index) => (
-          <div key={order._id} className="order-block">
-            {/* -------- Order Details Table -------- */}
-            <table border="1" cellPadding="10" cellSpacing="0" style={{ width: "100%", marginBottom: "20px" }}>
-              <thead>
-                <tr>
-                  <th>Order #</th>
-                  <th>Order ID</th>
-                  <th>Email</th>
-                  <th>User ID</th>
-                  <th>Full Name</th>
-                  <th>Phone</th>
-                  <th>Address</th>
-                  <th>Payment Method</th>
-                  <th>Payment Status</th>
-                  <th>Total</th>
-                  <th>Payment Intent ID</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>{index + 1}</td>
-                  <td>{order._id}</td>
-                  <td>{order.email}</td>
-                  <td>{order.userId}</td>
-                  <td>{order.fullName}</td>
-                  <td>{order.phoneNumber}</td>
-                  <td>{order.address}</td>
-                  <td>{order.paymentMethod}</td>
-                  <td>{order.paymentStatus}</td>
-                  <td>Rs. {order.total}</td>
-                  <td>{order.paymentIntentId || "N/A"}</td>
-                  <td>{new Date(order.date).toLocaleString()}</td>
-                </tr>
-              </tbody>
-            </table>
+          <div key={order._id || index} className="order-card">
+            <h3>Order #{index + 1}</h3>
+            <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleDateString()}</p>
+            <p><strong>Status:</strong> {order.status}</p>
+            <p><strong>Total:</strong> Rs. {order.totalAmount}</p>
 
-            {/* -------- Order Items Table -------- */}
-            <h4>Items in this Order:</h4>
-            <table border="1" cellPadding="10" cellSpacing="0" style={{ width: "100%", marginBottom: "40px" }}>
-              <thead>
-                <tr>
-                  <th>Product ID</th>
-                  <th>Name</th>
-                  <th>Quantity</th>
-                  <th>Price</th>
-                </tr>
-              </thead>
-              <tbody>
-                {order.items.map((item, i) => (
-                  <tr key={i}>
-                    <td>{item.productId}</td>
-                    <td>{item.name}</td>
-                    <td>{item.quantity}</td>
-                    <td>Rs. {item.price}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="order-items">
+              {order.items && Array.isArray(order.items) && order.items.length > 0 ? (
+                order.items.map((item, idx) => (
+                  <div key={idx} className="order-item">
+                    <p>{item.name} × {item.quantity}</p>
+                    <p>Rs. {item.price}</p>
+                  </div>
+                ))
+              ) : (
+                <p>No items in this order.</p>
+              )}
+            </div>
           </div>
         ))
       )}
