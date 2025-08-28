@@ -1,4 +1,3 @@
-// SearchBar.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -31,27 +30,35 @@ const SearchBar = () => {
     } else {
       const filtered = allProducts
         .filter(product => product.name.toLowerCase().includes(query.toLowerCase()))
-        .slice(0, 5);
+        .slice(0, 5); // limit suggestions
       setSuggestions(filtered);
     }
   }, [query, allProducts]);
 
+  // Scroll to top helper
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Search icon / Enter → Search Results page
   const handleSubmit = (e) => {
     e.preventDefault();
     if (query.trim()) {
       navigate(`/search?query=${query}`);
+      scrollToTop();
       setSuggestions([]);
     }
   };
 
-  const handleSuggestionClick = (name) => {
-    setQuery(name);
-    navigate(`/search?query=${name}`);
+  // Click suggestion → Product page
+  const handleSuggestionClick = (productId) => {
+    navigate(`/product/${productId}`);
+    scrollToTop();
     setSuggestions([]);
   };
 
   return (
-    <div className="search-bar-container" style={{ position: 'relative' }}>
+    <div className="search-bar-container">
       <form onSubmit={handleSubmit} className="search-bar">
         <input
           type="text"
@@ -66,7 +73,7 @@ const SearchBar = () => {
       {suggestions.length > 0 && (
         <ul className="suggestions-list">
           {suggestions.map((item) => (
-            <li key={item.id} onClick={() => handleSuggestionClick(item.name)}>
+            <li key={item.id} onClick={() => handleSuggestionClick(item.id)}>
               <div className="suggestion-item">
                 <img src={item.image} alt={item.name} className="suggestion-image" />
                 <div className="suggestion-info">
