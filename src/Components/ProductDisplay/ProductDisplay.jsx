@@ -6,13 +6,13 @@ import { ShopContext } from '../../Context/ShopContext';
 
 const ProductDisplay = (props) => {
     const { product } = props;
-    const { addToCart, cartItems, removeFromCart, updateCartQuantity } = useContext(ShopContext);
-    
-    // Update cart quantity when user enters it manually
+    const { addToCart, cartItems, updateCartQuantity } = useContext(ShopContext);
+
+    // Handle quantity change like in CartItems
     const handleQuantityChange = (event, productId) => {
         const newQuantity = parseInt(event.target.value, 10);
-        if (!isNaN(newQuantity) && newQuantity > 0) {
-            updateCartQuantity(productId, newQuantity);  // Call a function to update the cart's quantity
+        if (!isNaN(newQuantity) && newQuantity >= 0) {
+            updateCartQuantity(productId, newQuantity); // update quantity in context
         }
     };
 
@@ -29,18 +29,37 @@ const ProductDisplay = (props) => {
                     <img className='productdisplay-main-img' src={product.image} alt="" />
                 </div>
             </div>
+
             <div className='productdisplay-right'>
-                <h1>{product.name}</h1>
+                <h1 className="productdisplay-right-name">{product.name}</h1>
+
+                <div className='productdisplay-right-category'>
+                    Category: <strong>{product.category}</strong>
+                </div>
+
                 <div className='productdisplay-right-stars'>
                     <img src={star_icon} alt="" />
                     <img src={star_icon} alt="" />
                     <img src={star_icon} alt="" />
                     <img src={star_dull_icon} alt="" />
                 </div>
+
                 <div className='productdisplay-right-prices'>
                     <div className='productdisplay-right-price-old'>RS {product.old_price}</div>
                     <div className='productdisplay-right-price-new'>RS {product.new_price}</div>
                 </div>
+
+                {/* Quantity input like CartItems */}
+                <div className='productdisplay-right-quantity'>
+                    <label>Quantity:</label>
+                    <input
+                        type="number"
+                        min="0"
+                        value={cartItems[product.id] || 0}
+                        onChange={(e) => handleQuantityChange(e, product.id)}
+                    />
+                </div>
+
                 <button onClick={() => addToCart(product.id)}>ADD TO CART</button>
             </div>
         </div>
