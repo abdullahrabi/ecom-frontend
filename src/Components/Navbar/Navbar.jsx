@@ -33,21 +33,7 @@ const Navbar = () => {
     return localStorage.getItem('token') || sessionStorage.getItem('token');
   };
 
-  // Fetch order history if logged in
-  useEffect(() => {
-    if (isLoggedIn()) {
-      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      axios.get("http://localhost:5000/api/orders/history", {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      .then(res => {
-        setOrderHistory(res.data.orders || []);
-      })
-      .catch(() => {
-        setOrderHistory([]);
-      });
-    }
-  }, []);
+
 
   const handleLogout = () => {
     localStorage.removeItem('token');
