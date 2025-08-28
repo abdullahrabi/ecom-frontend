@@ -1,0 +1,59 @@
+.order-history {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.order-history h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #2d572c;
+}
+
+.order-card {
+  margin-bottom: 40px;
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 12px;
+  background: #fdfdfd;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.05);
+}
+
+.order-table,
+.items-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.order-table th,
+.items-table th {
+  background: #2d572c;
+  color: white;
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+}
+
+.order-table td,
+.items-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  font-size: 15px;
+}
+
+.items-table td {
+  text-align: center;
+}
+
+.order-table tr:nth-child(even),
+.items-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.order-table tr:hover,
+.items-table tr:hover {
+  background-color: #f1f7f1;
+  transition: background 0.3s ease;
+}
