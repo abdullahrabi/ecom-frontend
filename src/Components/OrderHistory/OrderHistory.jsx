@@ -75,10 +75,12 @@ const OrderHistory = () => {
                   <td><strong>Payment Method:</strong></td>
                   <td>{order.paymentMethod}</td>
                 </tr>
-                <tr>
-                  <td><strong>Payment Status:</strong></td>
-                  <td>{order.paymentStatus}</td>
-                </tr>
+               <td>
+                <span className={`status-badge status-${order.paymentStatus.toLowerCase()}`}>
+                {order.paymentStatus}
+                </span>
+                </td>
+
                 <tr>
                   <td><strong>Total:</strong></td>
                   <td>PKR {order.total}</td>
