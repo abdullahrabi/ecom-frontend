@@ -15,11 +15,14 @@ const OrderHistory = () => {
           return;
         }
 
-        const response = await axios.get('https://dept-store-backend.vercel.app/api/auth/order-history', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.get(
+          'https://dept-store-backend.vercel.app/api/auth/order-history',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (response.data && response.data.orders) {
           setOrders(response.data.orders);
@@ -40,18 +43,39 @@ const OrderHistory = () => {
   return (
     <div className="order-history">
       <h2>Your Order History</h2>
+
       {orders.length > 0 ? (
         <ul>
           {orders.map((order) => (
             <li key={order._id} className="order-item">
               <h4>Order #{order._id}</h4>
-              <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleDateString()}</p>
-              <p><strong>Total:</strong> Rs {order.totalPrice}</p>
+
+              {/* Render all key-value pairs dynamically */}
+              <div className="order-details">
+                {Object.entries(order).map(([key, value]) => (
+                  key !== "items" ? ( // items will be displayed separately
+                    <p key={key}>
+                      <strong>{key}:</strong>{" "}
+                      {typeof value === "object"
+                        ? JSON.stringify(value)
+                        : value?.toString()}
+                    </p>
+                  ) : null
+                ))}
+              </div>
+
+              {/* Items Section */}
+              <h5>Items:</h5>
               <ul>
                 {order.items && order.items.length > 0 ? (
                   order.items.map((item, idx) => (
                     <li key={idx}>
                       {item.productId?.name || 'Unknown Product'} - {item.quantity} pcs
+                      {item.productId && (
+                        <>
+                          {" | Price: Rs "}{item.productId.new_price || 'N/A'}
+                        </>
+                      )}
                     </li>
                   ))
                 ) : (
