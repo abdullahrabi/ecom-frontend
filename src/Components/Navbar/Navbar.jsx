@@ -14,8 +14,6 @@ const Navbar = () => {
   const [menu, setMenu] = useState("Home");
   const { getTotalCartItems } = useContext(ShopContext);
   const location = useLocation();
-
-  const [orderHistory, setOrderHistory] = useState([]);
   const [showOrders, setShowOrders] = useState(false);
 
   useEffect(() => {
@@ -75,7 +73,7 @@ const Navbar = () => {
             <div className="nav-cart-count">{getTotalCartItems()}</div>
 
             {/* Modern Order History Dropdown */}
-            {isLoggedIn() && showOrders && (
+            {isLoggedIn() (
               <div className="order-history-dropdown slide-down">
                 <Link to="/order-history" className="order-history-link">
                   <div className="order-text">
