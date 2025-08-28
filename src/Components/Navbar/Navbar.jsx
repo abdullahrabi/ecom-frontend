@@ -88,22 +88,16 @@ const Navbar = () => {
             </Link>
             <div className="nav-cart-count">{getTotalCartItems()}</div>
 
-            {/* Dropdown for order history */}
+            {/* Modern Order History Dropdown */}
             {isLoggedIn() && showOrders && (
-              <div className="order-history-dropdown">
-                <h4>Your Orders</h4>
-                {orderHistory.length > 0 ? (
-                  <ul>
-                    {orderHistory.slice(0, 5).map((order, index) => (
-                      <li key={index}>
-                        #{order._id.slice(-6)} - {order.items.length} items
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>No orders found</p>
-                )}
-                <Link to="/order-history" className="view-all-link">View All</Link>
+              <div className="order-history-dropdown slide-down">
+                <Link to="/order-history" className="order-history-link">
+                  <div className="order-icon">📦</div>
+                  <div className="order-text">
+                    <h4>Order History</h4>
+                    <p>Track your past purchases</p>
+                  </div>
+                </Link>
               </div>
             )}
           </div>
