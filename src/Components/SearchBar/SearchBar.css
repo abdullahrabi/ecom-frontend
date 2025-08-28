@@ -14,7 +14,7 @@
   border-radius: 40px;
   padding: 10px 15px;
   width: 100%;
-  background: linear-gradient(to left, #27ae60 10%, white 10%) right;
+  background: linear-gradient(to left, rgb(11, 102, 35) 10%, white 10%) right;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
@@ -108,7 +108,7 @@
 
 .suggestion-price {
   font-size: 0.9rem;
-  color: #27ae60; /* subtle green for price */
+  color: rgb(11, 102, 35); /* subtle green for price */
   font-weight: 600;
   margin-top: 2px;
 }
