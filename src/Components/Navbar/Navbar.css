@@ -134,6 +134,7 @@ body, html {
     display: none;
 
 }
+/* Cart container */
 .cart-container {
   position: relative;
   display: inline-block;
@@ -142,79 +143,51 @@ body, html {
 /* Dropdown box */
 .order-history-dropdown {
   position: absolute;
-  top: 70px; /* pushed down below cart */
+  top: 70px; /* pushed below cart */
   right: 0;
-  width: 260px;
+  width: 200px;
   background: #fff;
   border: 1px solid #ddd;
   box-shadow: 0 6px 12px rgba(0,0,0,0.15);
   border-radius: 10px;
-  padding: 12px;
+  padding: 8px;
   z-index: 100;
   animation: fadeIn 0.25s ease-in-out;
 }
 
-/* Title inside dropdown */
-.order-history-dropdown h4 {
-  font-size: 15px;
-  margin-bottom: 10px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 6px;
-  list-style: none;
-  color: #0b6623;
-}
-
-/* Orders list */
-.order-history-dropdown ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  max-height: 200px;
-  overflow-y: auto;
-}
-
-/* Each order item */
-.order-history-dropdown li {
-  font-size: 13px;
-  padding: 6px 8px;
-  border-radius: 6px;
+/* The clickable link */
+.order-history-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #333;
+  padding: 10px;
+  border-radius: 8px;
   transition: background 0.2s ease;
-  cursor: pointer;
-  border-bottom: 1px solid #f0f0f0;
 }
 
-.order-history-dropdown li:hover {
-  background: #f8f8f8;
+.order-history-link:hover {
+  background: #f5f5f5;
 }
 
-/* Remove last border */
-.order-history-dropdown li:last-child {
-  border-bottom: none;
-}
 
-/* "View All" link */
-.order-history-dropdown .view-all-link {
-  display: block;
-  text-align: center;
-  margin-top: 10px;
-  font-size: 13px;
+/* Text next to the icon */
+.order-text h4 {
+  margin: 0;
+  font-size: 14px;
   font-weight: 600;
   color: #0b6623;
   text-decoration: none;
-  padding: 6px;
-  border-radius: 6px;
-  transition: background 0.2s ease;
 }
 
-.order-history-dropdown .view-all-link:hover {
-  background: #e6f4ea;
-}
-
-/* Dropdown fade-in animation */
+/* Fade-in animation */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-8px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+
 
 
 @media(max-width: 1280px) {
