@@ -43,7 +43,7 @@
   position: absolute;
   top: 100%;
   left: 0;
-  width: 95%;
+  width: 93%;
   /* Let it grow dynamically, no scroll */
   border: 1px solid #ccc;
   border-radius: 0 0 40px 40px; /* match search bar corners */
