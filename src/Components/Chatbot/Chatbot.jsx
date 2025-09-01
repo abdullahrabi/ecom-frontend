@@ -30,21 +30,23 @@ const Chatbot = () => {
     );
   };
 
-  // 📋 Helper: Show all products neatly
+  // 📋 Helper: Show all products neatly with spacing for categories
   const showAllProducts = () => {
     if (!all_product.length) return "No products available.";
-    return all_product
-      .map((p) => `- ${p.name} (Rs ${p.new_price})`)
-      .join("\n");
-  };
+    // Group products by category
+    const categories = {};
+    all_product.forEach((p) => {
+      if (!categories[p.category]) categories[p.category] = [];
+      categories[p.category].push(`${p.name} (Rs ${p.new_price})`);
+    });
 
-  // 📝 Format Gemini / Markdown-like text for display
-  const formatBotText = (text) => {
-    return text
-      .replace(/\*{1,2}/g, "") // remove * or **
-      .replace(/For (.+?):/g, "📌 $1:\n") // categories
-      .replace(/ - /g, "\n- ") // each product on a new line
-      .replace(/\n+/g, "\n"); // clean multiple newlines
+    // Format with spacing
+    return Object.keys(categories)
+      .map(
+        (cat) =>
+          `📌 ${cat.replace("_", " & ")}:\n- ${categories[cat].join("\n- ")}`
+      )
+      .join("\n\n"); // extra line between categories
   };
 
   const handleSend = async () => {
@@ -65,7 +67,7 @@ const Chatbot = () => {
         addToCart(product.id);
         setMessages((prev) => [
           ...prev,
-          { text: `✅ Added ${product.name} to your cart. 🛍️`, sender: "bot" },
+          { text: `✅ Added **${product.name}** to your cart. 🛍️`, sender: "bot" },
         ]);
       } else {
         setMessages((prev) => [
@@ -85,7 +87,7 @@ const Chatbot = () => {
         removeFromCart(product.id, true);
         setMessages((prev) => [
           ...prev,
-          { text: `🗑️ Removed ${product.name} from your cart.`, sender: "bot" },
+          { text: `🗑️ Removed **${product.name}** from your cart.`, sender: "bot" },
         ]);
       } else {
         setMessages((prev) => [
@@ -104,7 +106,7 @@ const Chatbot = () => {
       if (product) {
         setMessages((prev) => [
           ...prev,
-          { text: `💲 The price of ${product.name} is Rs ${product.new_price}.`, sender: "bot" },
+          { text: `💲 The price of **${product.name}** is **Rs ${product.new_price}**.`, sender: "bot" },
         ]);
       } else {
         setMessages((prev) => [
@@ -144,7 +146,7 @@ const Chatbot = () => {
       const totalItems = getTotalCartItems();
       setMessages((prev) => [
         ...prev,
-        { text: `🔢 You currently have ${totalItems} item(s) in your cart.`, sender: "bot" },
+        { text: `🔢 You currently have **${totalItems} item(s)** in your cart.`, sender: "bot" },
       ]);
       setLoading(false);
       return;
@@ -155,7 +157,7 @@ const Chatbot = () => {
       const totalAmount = getTotalCartAmount();
       setMessages((prev) => [
         ...prev,
-        { text: `💰 The total amount of your cart is Rs ${totalAmount}.`, sender: "bot" },
+        { text: `💰 The total amount of your cart is **Rs ${totalAmount}**.`, sender: "bot" },
       ]);
       setLoading(false);
       return;
@@ -186,7 +188,7 @@ If the user asks something unrelated, politely say:
 "Sorry, I can only help with shopping questions in our store."
 
 User query: ${input}
-Available products:\n${all_product.map((p) => `- ${p.name} (Rs ${p.new_price})`).join("\n")}
+Available products:\n${showAllProducts()}
                 `,
               },
             ],
@@ -195,8 +197,7 @@ Available products:\n${all_product.map((p) => `- ${p.name} (Rs ${p.new_price})`)
       });
 
       const response = await result.response;
-      let text = response.text();
-      text = formatBotText(text); // Format Gemini response
+      const text = response.text();
       setMessages((prev) => [...prev, { text, sender: "bot" }]);
     } catch (error) {
       console.error("Gemini API Error:", error);
@@ -211,12 +212,14 @@ Available products:\n${all_product.map((p) => `- ${p.name} (Rs ${p.new_price})`)
 
   return (
     <div>
+      {/* Floating Chatbot Icon */}
       {!isOpen && (
         <button className="chatbot-icon" onClick={() => setIsOpen(true)}>
           <img src={help_icon} alt="Chatbot Icon" />
         </button>
       )}
 
+      {/* Chatbot Window */}
       {isOpen && (
         <div className="chatbot-container">
           <div className="chatbot-header">
@@ -230,7 +233,11 @@ Available products:\n${all_product.map((p) => `- ${p.name} (Rs ${p.new_price})`)
                 key={i}
                 className={`chatbot-message ${msg.sender === "user" ? "user-message" : "bot-message"}`}
               >
-                {msg.text}
+                {msg.text.split("\n").map((line, idx) => (
+                  <div key={idx} style={{ marginBottom: line.startsWith("📌") ? "8px" : "2px" }}>
+                    {line}
+                  </div>
+                ))}
               </div>
             ))}
             {loading && <div className="bot-message">🤖 Typing...</div>}
