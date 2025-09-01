@@ -1,78 +1,59 @@
 import React, { useState } from "react";
 import "./Chatbot.css";
-import help_icon from "../Assests/help_icon.png"
 
 const Chatbot = () => {
   const [messages, setMessages] = useState([
-    { text: "Hi 👋, I'm your shopping assistant. How can I help?", sender: "bot" },
+    { sender: "bot", text: "Hi 👋 How can I help you today?" },
   ]);
   const [input, setInput] = useState("");
-  const [isOpen, setIsOpen] = useState(false); // toggle chatbot
+
+  // Check login status from localStorage
+  const isLoggedIn = !!localStorage.getItem("token");
 
   const handleSend = () => {
-    if (input.trim() === "") return;
+    if (!input.trim()) return;
 
-    // Add user message
-    const userMessage = { text: input, sender: "user" };
-    setMessages([...messages, userMessage]);
+    const newMessage = { sender: "user", text: input };
+    setMessages([...messages, newMessage]);
 
-    // Clear input
-    setInput("");
-
-    // Fake bot reply (later connect Gemini here)
+    // Bot reply based on login condition
     setTimeout(() => {
-      const botMessage = {
-        text: "Got it! (I'll connect to Gemini soon 🤖)",
-        sender: "bot",
-      };
-      setMessages((prev) => [...prev, botMessage]);
-    }, 1000);
+      if (isLoggedIn) {
+        setMessages((prev) => [
+          ...prev,
+          { sender: "bot", text: `✅ You are logged in! I will process: "${input}"` },
+        ]);
+      } else {
+        setMessages((prev) => [
+          ...prev,
+          { sender: "bot", text: "⚠️ Kindly login to use the chatbot features." },
+        ]);
+      }
+    }, 500);
+
+    setInput("");
   };
 
   return (
-    <div>
-      {/* Floating Chatbot Icon */}
-      {!isOpen && (
-        <button className="chatbot-icon" onClick={() => setIsOpen(true)}>
-          <img src={help_icon} alt="" />
-        </button>
-      )}
-
-      {/* Chatbot Window */}
-      {isOpen && (
-        <div className="chatbot-container">
-          <div className="chatbot-header">
-            💬 Chat Support
-            <span className="chatbot-close" onClick={() => setIsOpen(false)}>
-              ✖
-            </span>
+    <div className="chatbot-container">
+      <div className="chatbot-header">💬 Chatbot</div>
+      <div className="chatbot-messages">
+        {messages.map((msg, i) => (
+          <div key={i} className={`chat-message ${msg.sender}`}>
+            {msg.text}
           </div>
-
-          <div className="chatbot-messages">
-            {messages.map((msg, i) => (
-              <div
-                key={i}
-                className={`chatbot-message ${
-                  msg.sender === "user" ? "user-message" : "bot-message"
-                }`}
-              >
-                {msg.text}
-              </div>
-            ))}
-          </div>
-
-          <div className="chatbot-input">
-            <input
-              type="text"
-              placeholder="Type your message..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSend()}
-            />
-            <button onClick={handleSend}>Send</button>
-          </div>
-        </div>
-      )}
+        ))}
+      </div>
+      <div className="chatbot-input">
+        <input
+          type="text"
+          placeholder="Type your message..."
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleSend()}
+        />
+        <button onClick={handleSend}>Send</button>
+      </div>
     </div>
   );
 };
