@@ -21,6 +21,16 @@ import Chatbot from '../Components/Chatbot/Chatbot';
 import up_arrow from '../Components/Assests/up_arrow.png';
 
 const Home = () => {
+// ✅ Track login status
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token =
+      localStorage.getItem("token") || sessionStorage.getItem("token");
+    setIsLoggedIn(!!token); // true if token exists
+  }, [token]);
+
+  
   // Create a helper function to manage scroll-triggered animations
   const useScrollAnimation = (delay) => {
     const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
@@ -135,7 +145,10 @@ const Home = () => {
       <animated.div style={newsletterSpring} ref={newsletterRef}>
         <NewsLetter />
       </animated.div>
-<Chatbot/>
+
+
+   {/* ✅ Show chatbot only if logged in */}
+      {isLoggedIn && <Chatbot />}
       {/* Scroll to Top Button */}
       {isVisible && (
         <img
