@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import "./Chatbot.css";
 import help_icon from "../Assests/help_icon.png";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { ShopContext } from "../Context/ShopContext";
+import { ShopContext } from '../../Context/ShopContext';
 
 const Chatbot = () => {
   const { all_product, addToCart, removeFromCart } = useContext(ShopContext);
