@@ -1,34 +1,47 @@
 import React, { useState } from "react";
 import "./Chatbot.css";
-import help_icon from "../Assests/help_icon.png"
+import help_icon from "../Assests/help_icon.png";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const Chatbot = () => {
   const [messages, setMessages] = useState([
     { text: "Hi 👋, I'm your shopping assistant. How can I help?", sender: "bot" },
   ]);
   const [input, setInput] = useState("");
-  const [isOpen, setIsOpen] = useState(false); // toggle chatbot
-  
+  const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSend = () => {
-   
+  // ✅ Initialize Gemini
+  const genAI = new GoogleGenerativeAI(process.env.REACT_APP_GEMINI_API_KEY);
+
+  const handleSend = async () => {
     if (input.trim() === "") return;
 
     // Add user message
     const userMessage = { text: input, sender: "user" };
-    setMessages([...messages, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
 
-    // Clear input
     setInput("");
+    setLoading(true);
 
-    // Fake bot reply (later connect Gemini here)
-    setTimeout(() => {
-      const botMessage = {
-        text: "Got it! (I'll connect to Gemini soon 🤖)",
+    try {
+      const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+      const result = await model.generateContent(input);
+      const response = await result.response;
+      const text = response.text();
+
+      const botMessage = { text, sender: "bot" };
+      setMessages((prev) => [...prev, botMessage]);
+    } catch (error) {
+      console.error("Gemini API Error:", error);
+      const errorMessage = {
+        text: "⚠️ Oops! Something went wrong. Please try again.",
         sender: "bot",
       };
-      setMessages((prev) => [...prev, botMessage]);
-    }, 1000);
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -36,7 +49,7 @@ const Chatbot = () => {
       {/* Floating Chatbot Icon */}
       {!isOpen && (
         <button className="chatbot-icon" onClick={() => setIsOpen(true)}>
-          <img src={help_icon} alt="" />
+          <img src={help_icon} alt="Chatbot Icon" />
         </button>
       )}
 
@@ -61,6 +74,7 @@ const Chatbot = () => {
                 {msg.text}
               </div>
             ))}
+            {loading && <div className="bot-message">🤖 Typing...</div>}
           </div>
 
           <div className="chatbot-input">
@@ -71,7 +85,9 @@ const Chatbot = () => {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}
             />
-            <button onClick={handleSend}>Send</button>
+            <button onClick={handleSend} disabled={loading}>
+              {loading ? "..." : "Send"}
+            </button>
           </div>
         </div>
       )}
