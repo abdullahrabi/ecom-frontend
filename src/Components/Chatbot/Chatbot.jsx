@@ -8,7 +8,7 @@ const Chatbot = () => {
   const [input, setInput] = useState("");
 
   // Check login status from localStorage
-  const isLoggedIn = !!localStorage.getItem("token");
+  const isLoggedIn = !!localStorage.getItem("token")|| !! sessionStorage.getItem("token");
 
   const handleSend = () => {
     if (!input.trim()) return;
