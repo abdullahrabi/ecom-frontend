@@ -21,7 +21,6 @@ const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // ✅ Initialize Gemini
   const genAI = new GoogleGenerativeAI(process.env.REACT_APP_GEMINI_API_KEY);
 
   // 🔍 Helper: Find product by name
@@ -29,6 +28,14 @@ const Chatbot = () => {
     return all_product.find((p) =>
       p.name.toLowerCase().includes(query.toLowerCase())
     );
+  };
+
+  // 📋 Helper: Show all products neatly
+  const showAllProducts = () => {
+    if (!all_product.length) return "No products available.";
+    return all_product
+      .map((p) => `- ${p.name} (Rs ${p.new_price})`)
+      .join("\n");
   };
 
   const handleSend = async () => {
@@ -145,6 +152,16 @@ const Chatbot = () => {
       return;
     }
 
+    // 🛍️ Show all products
+    if (lowerInput.includes("all products") || lowerInput.includes("list products")) {
+      setMessages((prev) => [
+        ...prev,
+        { text: `🛍️ Here are all products:\n${showAllProducts()}`, sender: "bot" },
+      ]);
+      setLoading(false);
+      return;
+    }
+
     // 🤖 Otherwise → Ask Gemini
     try {
       const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
@@ -160,7 +177,7 @@ If the user asks something unrelated, politely say:
 "Sorry, I can only help with shopping questions in our store."
 
 User query: ${input}
-Available products: ${all_product.map((p) => `${p.name} (Rs ${p.new_price})`).join(", ")}
+Available products:\n${all_product.map((p) => `- ${p.name} (Rs ${p.new_price})`).join("\n")}
                 `,
               },
             ],
