@@ -67,7 +67,7 @@ const Chatbot = () => {
         addToCart(product.id);
         setMessages((prev) => [
           ...prev,
-          { text: `✅ Added **${product.name}** to your cart. 🛍️`, sender: "bot" },
+          { text: `✅ Added ${product.name} to your cart. 🛍️`, sender: "bot" },
         ]);
       } else {
         setMessages((prev) => [
@@ -87,7 +87,7 @@ const Chatbot = () => {
         removeFromCart(product.id, true);
         setMessages((prev) => [
           ...prev,
-          { text: `🗑️ Removed **${product.name}** from your cart.`, sender: "bot" },
+          { text: `🗑️ Removed ${product.name} from your cart.`, sender: "bot" },
         ]);
       } else {
         setMessages((prev) => [
@@ -106,7 +106,7 @@ const Chatbot = () => {
       if (product) {
         setMessages((prev) => [
           ...prev,
-          { text: `💲 The price of **${product.name}** is **Rs ${product.new_price}**.`, sender: "bot" },
+          { text: `💲 The price of ${product.name} is Rs ${product.new_price}.`, sender: "bot" },
         ]);
       } else {
         setMessages((prev) => [
@@ -146,7 +146,7 @@ const Chatbot = () => {
       const totalItems = getTotalCartItems();
       setMessages((prev) => [
         ...prev,
-        { text: `🔢 You currently have **${totalItems} item(s)** in your cart.`, sender: "bot" },
+        { text: `🔢 You currently have ${totalItems} item(s)in your cart.`, sender: "bot" },
       ]);
       setLoading(false);
       return;
@@ -157,7 +157,7 @@ const Chatbot = () => {
       const totalAmount = getTotalCartAmount();
       setMessages((prev) => [
         ...prev,
-        { text: `💰 The total amount of your cart is **Rs ${totalAmount}**.`, sender: "bot" },
+        { text: `💰 The total amount of your cart is Rs ${totalAmount}.`, sender: "bot" },
       ]);
       setLoading(false);
       return;
