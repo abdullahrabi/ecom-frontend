@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import "./Chatbot.css";
 import help_icon from "../Assests/help_icon.png";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { ShopContext } from "../Context/ShopContext";
 
 const Chatbot = () => {
+  const { all_product, addToCart, removeFromCart } = useContext(ShopContext);
+
   const [messages, setMessages] = useState([
     { text: "Hi 👋, I'm your shopping assistant. How can I help?", sender: "bot" },
   ]);
@@ -13,6 +16,13 @@ const Chatbot = () => {
 
   // ✅ Initialize Gemini
   const genAI = new GoogleGenerativeAI(process.env.REACT_APP_GEMINI_API_KEY);
+
+  // 🔍 Helper: Find product by name (case-insensitive)
+  const findProduct = (query) => {
+    return all_product.find((p) =>
+      p.name.toLowerCase().includes(query.toLowerCase())
+    );
+  };
 
   const handleSend = async () => {
     if (input.trim() === "") return;
@@ -24,6 +34,68 @@ const Chatbot = () => {
     setInput("");
     setLoading(true);
 
+    // 🛒 Handle cart-related commands
+    const lowerInput = input.toLowerCase();
+    if (lowerInput.startsWith("add ")) {
+      const productName = input.replace("add", "").trim();
+      const product = findProduct(productName);
+      if (product) {
+        addToCart(product.id);
+        setMessages((prev) => [
+          ...prev,
+          { text: `✅ ${product.name} added to your cart.`, sender: "bot" },
+        ]);
+      } else {
+        setMessages((prev) => [
+          ...prev,
+          { text: "⚠️ Sorry, I couldn't find that product.", sender: "bot" },
+        ]);
+      }
+      setLoading(false);
+      return;
+    }
+
+    if (lowerInput.startsWith("remove ")) {
+      const productName = input.replace("remove", "").trim();
+      const product = findProduct(productName);
+      if (product) {
+        removeFromCart(product.id, true);
+        setMessages((prev) => [
+          ...prev,
+          { text: `🗑️ ${product.name} removed from your cart.`, sender: "bot" },
+        ]);
+      } else {
+        setMessages((prev) => [
+          ...prev,
+          { text: "⚠️ Product not found.", sender: "bot" },
+        ]);
+      }
+      setLoading(false);
+      return;
+    }
+
+    if (lowerInput.includes("price")) {
+      const productName = input.replace("price", "").trim();
+      const product = findProduct(productName);
+      if (product) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            text: `💲 The price of ${product.name} is $${product.new_price}.`,
+            sender: "bot",
+          },
+        ]);
+      } else {
+        setMessages((prev) => [
+          ...prev,
+          { text: "⚠️ I couldn't find that product.", sender: "bot" },
+        ]);
+      }
+      setLoading(false);
+      return;
+    }
+
+    // 🤖 Otherwise → Send to Gemini
     try {
       const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
       const result = await model.generateContent(input);
