@@ -28,7 +28,7 @@ const Home = () => {
     const token =
       localStorage.getItem("token") || sessionStorage.getItem("token");
     setIsLoggedIn(!!token); // true if token exists
-  }, [token]);
+  }, []);
 
   
   // Create a helper function to manage scroll-triggered animations
