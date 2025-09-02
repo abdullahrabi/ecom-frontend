@@ -1,5 +1,6 @@
 import './App.css';
 import Navbar from './Components/Navbar/Navbar';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './Pages/Home';
 import ShopCategory from './Pages/ShopCategory';
@@ -10,7 +11,6 @@ import SearchResults from './Pages/SearchResults';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Footer from './Components/Footer/Footer';
-import { useEffect } from 'react';
 import Turnstile from 'react-turnstile';
 import CheckoutForm from './Components/CheckoutForm/CheckoutForm';
 import OrderHistory from './Components/OrderHistory/OrderHistory';
