@@ -151,7 +151,7 @@ const SignupForm = ({ onToggle, onSubmit }) => {
 };
 
 // -------- Main LoginSignup --------
-const LoginSignup = () => {
+const LoginSignup = ({ setIsLoggedIn }) => {
   const [isSwapped, setIsSwapped] = useState(false);
   const [showCaptcha, setShowCaptcha] = useState(false);
   const [pendingAction, setPendingAction] = useState(null);
