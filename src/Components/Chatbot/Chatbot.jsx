@@ -219,19 +219,27 @@ const Chatbot = () => {
     // 🤖 Otherwise → Ask Gemini
     try {
       const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
       const result = await model.generateContent({
         contents: [
+          ...messages.map((m) => ({
+            role: m.sender === "user" ? "user" : "model",
+            parts: [{ text: m.text }],
+          })),
           {
             role: "user",
             parts: [
               {
                 text: `
-You are a shopping assistant. ONLY talk about the store’s products and shopping-related queries.
+You are a shopping assistant for LA Organic Store.
+ONLY talk about the store’s products and shopping-related queries.
 If the user asks something unrelated, politely say:
 "Sorry, I can only help with shopping questions in our store."
 
 User query: ${input}
-Available products:\n${showAllProducts()}
+
+Available products:
+${showAllProducts()}
                 `,
               },
             ],
@@ -241,6 +249,7 @@ Available products:\n${showAllProducts()}
 
       const response = await result.response;
       const text = response.text();
+
       setMessages((prev) => [...prev, { text, sender: "bot" }]);
     } catch (error) {
       console.error("Gemini API Error:", error);
@@ -251,7 +260,7 @@ Available products:\n${showAllProducts()}
     } finally {
       setLoading(false);
     }
-  };
+  }; // ✅ FIX: properly closed handleSend
 
   return (
     <div>
