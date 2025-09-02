@@ -14,7 +14,7 @@ import { useEffect } from 'react';
 import Turnstile from 'react-turnstile';
 import CheckoutForm from './Components/CheckoutForm/CheckoutForm';
 import OrderHistory from './Components/OrderHistory/OrderHistory';
-import Chatbot from '../Components/Chatbot/Chatbot';
+import Chatbot from './Components/Chatbot/Chatbot';
 function App() {
   // ✅ Track login status
     const [isLoggedIn, setIsLoggedIn] = useState(false);
