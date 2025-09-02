@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import "./Chatbot.css";
 import help_icon from "../Assests/help_icon.png";
 import { GoogleGenerativeAI } from "@google/generative-ai";
@@ -22,8 +22,17 @@ const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const messagesEndRef = useRef(null);
+
   const genAI = new GoogleGenerativeAI(process.env.REACT_APP_GEMINI_API_KEY);
   const API_BASE = process.env.REACT_APP_BACKEND_URL;
+
+  // ✅ Auto-scroll to last message
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   // ✅ Load chat history when chatbot opens
   useEffect(() => {
@@ -67,14 +76,27 @@ const Chatbot = () => {
     saveHistory();
   }, [messages]);
 
-  // 🔍 Helper: Find product by name
+  // 🔍 Helper: Find product by name (case-insensitive)
   const findProduct = (query) => {
-    return all_product.find((p) =>
-      p.name.toLowerCase().includes(query.toLowerCase())
+    if (!query) return null;
+    const cleanQuery = query.toLowerCase().trim();
+
+    return (
+      all_product.find((p) => p.name.toLowerCase().trim() === cleanQuery) ||
+      all_product.find((p) => p.name.toLowerCase().includes(cleanQuery))
     );
   };
 
-  // 📋 Helper: Show all products neatly with spacing
+  // 📋 Helper: Find category by name (case-insensitive)
+  const findCategory = (query) => {
+    if (!query) return null;
+    const cleanQuery = query.toLowerCase().trim();
+
+    const categories = [...new Set(all_product.map((p) => p.category))];
+    return categories.find((c) => c.toLowerCase().includes(cleanQuery));
+  };
+
+  // 📋 Helper: Show all products neatly
   const showAllProducts = () => {
     if (!all_product.length) return "No products available.";
     const categories = {};
@@ -126,6 +148,7 @@ const Chatbot = () => {
     if (lowerInput.includes("remove") || lowerInput.includes("delete")) {
       const productName = input.replace(/remove|delete/gi, "").trim();
       const product = findProduct(productName);
+
       if (product) {
         removeFromCart(product.id, true);
         setMessages((prev) => [
@@ -155,6 +178,35 @@ const Chatbot = () => {
         setMessages((prev) => [
           ...prev,
           { text: "⚠️ Hmm, I don’t see that item in our catalog.", sender: "bot" },
+        ]);
+      }
+      setLoading(false);
+      return;
+    }
+
+    // 📋 Show category products
+    if (lowerInput.includes("show") || lowerInput.includes("list")) {
+      const categoryName = input.replace(/show|list|products|in|of/gi, "").trim();
+      const matchedCategory = findCategory(categoryName);
+
+      if (matchedCategory) {
+        const products = all_product
+          .filter((p) => p.category.toLowerCase() === matchedCategory.toLowerCase())
+          .map((p) => `${p.name} (Rs ${p.new_price})`);
+
+        setMessages((prev) => [
+          ...prev,
+          {
+            text: products.length
+              ? `📌 Products in ${matchedCategory.replace("_", " & ")}:\n- ${products.join("\n- ")}`
+              : `⚠️ No products found in ${matchedCategory}.`,
+            sender: "bot",
+          },
+        ]);
+      } else {
+        setMessages((prev) => [
+          ...prev,
+          { text: "⚠️ Sorry, I couldn’t recognize that category.", sender: "bot" },
         ]);
       }
       setLoading(false);
@@ -247,16 +299,14 @@ ${showAllProducts()}
         ],
       });
 
-    const response = await result.response;
-let text = response.text();
+      const response = await result.response;
+      let text = response.text();
 
-// 🧹 Remove markdown symbols like **, *, #
-text = text.replace(/\*\*(.*?)\*\*/g, "$1"); // remove bold
-text = text.replace(/\*(.*?)\*/g, "$1");     // remove italic
-text = text.replace(/#+\s/g, "");            // remove headings
+      text = text.replace(/\*\*(.*?)\*\*/g, "$1");
+      text = text.replace(/\*(.*?)\*/g, "$1");
+      text = text.replace(/#+\s/g, "");
 
-setMessages((prev) => [...prev, { text, sender: "bot" }]);
-
+      setMessages((prev) => [...prev, { text, sender: "bot" }]);
     } catch (error) {
       console.error("Gemini API Error:", error);
       setMessages((prev) => [
@@ -266,18 +316,16 @@ setMessages((prev) => [...prev, { text, sender: "bot" }]);
     } finally {
       setLoading(false);
     }
-  }; // ✅ FIX: properly closed handleSend
+  };
 
   return (
     <div>
-      {/* Floating Chatbot Icon */}
       {!isOpen && (
         <button className="chatbot-icon" onClick={() => setIsOpen(true)}>
           <img src={help_icon} alt="Chatbot Icon" />
         </button>
       )}
 
-      {/* Chatbot Window */}
       {isOpen && (
         <div className="chatbot-container">
           <div className="chatbot-header">
@@ -299,6 +347,7 @@ setMessages((prev) => [...prev, { text, sender: "bot" }]);
               </div>
             ))}
             {loading && <div className="bot-message">🤖 Typing...</div>}
+            <div ref={messagesEndRef} />
           </div>
 
           <div className="chatbot-input">
