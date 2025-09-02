@@ -247,10 +247,16 @@ ${showAllProducts()}
         ],
       });
 
-      const response = await result.response;
-      const text = response.text();
+    const response = await result.response;
+let text = response.text();
 
-      setMessages((prev) => [...prev, { text, sender: "bot" }]);
+// 🧹 Remove markdown symbols like **, *, #
+text = text.replace(/\*\*(.*?)\*\*/g, "$1"); // remove bold
+text = text.replace(/\*(.*?)\*/g, "$1");     // remove italic
+text = text.replace(/#+\s/g, "");            // remove headings
+
+setMessages((prev) => [...prev, { text, sender: "bot" }]);
+
     } catch (error) {
       console.error("Gemini API Error:", error);
       setMessages((prev) => [
