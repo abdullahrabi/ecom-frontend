@@ -1,8 +1,9 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "./Chatbot.css";
 import help_icon from "../Assests/help_icon.png";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { ShopContext } from "../../Context/ShopContext";
+import axios from "axios";
 
 const Chatbot = () => {
   const {
@@ -22,6 +23,49 @@ const Chatbot = () => {
   const [loading, setLoading] = useState(false);
 
   const genAI = new GoogleGenerativeAI(process.env.REACT_APP_GEMINI_API_KEY);
+  const API_BASE = process.env.REACT_APP_BACKEND_URL;
+
+  // ✅ Load chat history when chatbot opens
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+        if (!token) return;
+
+        const res = await axios.get(`${API_BASE}/chat/history`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (res.data.success && res.data.chat) {
+          setMessages(res.data.chat.messages);
+        }
+      } catch (err) {
+        console.error("Error loading chat history:", err);
+      }
+    };
+
+    if (isOpen) fetchHistory();
+  }, [isOpen]);
+
+  // ✅ Save chat history on every update
+  useEffect(() => {
+    const saveHistory = async () => {
+      try {
+        const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+        if (!token || messages.length === 0) return;
+
+        await axios.post(
+          `${API_BASE}/chat/save`,
+          { messages },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      } catch (err) {
+        console.error("Error saving chat history:", err);
+      }
+    };
+
+    saveHistory();
+  }, [messages]);
 
   // 🔍 Helper: Find product by name
   const findProduct = (query) => {
@@ -30,25 +74,24 @@ const Chatbot = () => {
     );
   };
 
-  // 📋 Helper: Show all products neatly with spacing for categories
+  // 📋 Helper: Show all products neatly with spacing
   const showAllProducts = () => {
     if (!all_product.length) return "No products available.";
-    // Group products by category
     const categories = {};
     all_product.forEach((p) => {
       if (!categories[p.category]) categories[p.category] = [];
       categories[p.category].push(`${p.name} (Rs ${p.new_price})`);
     });
 
-    // Format with spacing
     return Object.keys(categories)
       .map(
         (cat) =>
           `📌 ${cat.replace("_", " & ")}:\n- ${categories[cat].join("\n- ")}`
       )
-      .join("\n\n"); // extra line between categories
+      .join("\n\n");
   };
 
+  // 🚀 Handle Send
   const handleSend = async () => {
     if (input.trim() === "") return;
 
@@ -146,7 +189,7 @@ const Chatbot = () => {
       const totalItems = getTotalCartItems();
       setMessages((prev) => [
         ...prev,
-        { text: `🔢 You currently have ${totalItems} item(s)in your cart.`, sender: "bot" },
+        { text: `🔢 You currently have ${totalItems} item(s) in your cart.`, sender: "bot" },
       ]);
       setLoading(false);
       return;
