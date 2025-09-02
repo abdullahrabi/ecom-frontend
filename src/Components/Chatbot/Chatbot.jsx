@@ -176,7 +176,13 @@ const showAllProducts = () => {
       });
 
       let text = (await result.response).text();
-      text = text.replace(/\*\*(.*?)\*\*/g, "$1").replace(/\*(.*?)\*/g, "$1").replace(/#+\s/g, "");
+      
+      // ✅ Clean up Markdown formatting
+      text = text.replace(/\*\*(.*?)\*\*/g, "$1"); // remove bold
+      text = text.replace(/\*(.*?)\*/g, "$1");     // remove bullet asterisks
+      text = text.replace(/#+\s/g, "");           // remove headers
+      text = text.replace(/-/g, "");              // remove any leftover hyphens
+
 
       const botMsg = { text, sender: "bot" };
       setMessages((prev) => { saveHistory([...prev, botMsg]); return [...prev, botMsg]; });
