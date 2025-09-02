@@ -43,7 +43,7 @@ function App() {
           <Route path='/order-history' element={<OrderHistory />} />
           <Route path='/product/:productId' element={<Product />} />
           <Route path='/cart' element={<Cart />} />
-          <Route path='/login' element={<LoginSignup />} />
+          <Route path='/login' element={<LoginSignup setIsLoggedIn={setIsLoggedIn} />} />
           <Route path='/checkout' element={<CheckoutForm />} />
         </Routes>
 

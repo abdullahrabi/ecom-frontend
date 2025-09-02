@@ -180,6 +180,9 @@ const LoginSignup = () => {
           // Store token properly
           updateToken(res.data.token, rememberMe);
           toast.success("Login Successfully");
+            // Update global login state
+            setIsLoggedIn(true);
+          
           navigate('/'); // navigate after login
         }
       } else if (pendingAction.type === "signup") {
