@@ -28,7 +28,7 @@
 /* Chatbot Container */
 .chatbot-container {
   position: fixed;
-  bottom: 40px;
+  bottom: 50px;
   right: 20px;
   width: 350px;
   height: 450px;
