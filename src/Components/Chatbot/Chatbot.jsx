@@ -177,11 +177,14 @@ const showAllProducts = () => {
 
       let text = (await result.response).text();
       
-      // ✅ Clean up Markdown formatting
-      text = text.replace(/\*\*(.*?)\*\*/g, "$1"); // remove bold
-      text = text.replace(/\*(.*?)\*/g, "$1");     // remove bullet asterisks
-      text = text.replace(/#+\s/g, "");           // remove headers
-      text = text.replace(/-/g, "");              // remove any leftover hyphens
+      // Remove bold (**text**), italics (*text*), headers (#), and leading bullet markers (* or -)
+    text = text
+      .replace(/\*\*(.*?)\*\*/g, "$1")     // remove bold
+      .replace(/\*(.*?)\*/g, "$1")         // remove italic or inline *
+      .replace(/#+\s/g, "")                // remove headers
+      .split("\n")                          // split lines
+      .map(line => line.replace(/^[-*]\s*/, "")) // remove leading - or * with optional space
+      .join("\n");                          // join lines back
 
 
       const botMsg = { text, sender: "bot" };
