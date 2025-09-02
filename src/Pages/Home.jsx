@@ -17,18 +17,9 @@ import home from '../Components/Assests/home.png';
 import The_Latest from '../Components/The_Latest/The_Latest';
 import NewsLetter from '../Components/NewsLetter/NewsLetter';
 import Hero from '../Components/Hero/Hero';
-import Chatbot from '../Components/Chatbot/Chatbot';
 import up_arrow from '../Components/Assests/up_arrow.png';
 
 const Home = () => {
-// ✅ Track login status
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    const token =
-      localStorage.getItem("token") || sessionStorage.getItem("token");
-    setIsLoggedIn(!!token); // true if token exists
-  }, []);
 
   
   // Create a helper function to manage scroll-triggered animations
@@ -147,8 +138,7 @@ const Home = () => {
       </animated.div>
 
 
-   {/* ✅ Show chatbot only if logged in */}
-      {isLoggedIn && <Chatbot />}
+
       {/* Scroll to Top Button */}
       {isVisible && (
         <img

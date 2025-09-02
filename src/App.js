@@ -14,7 +14,17 @@ import { useEffect } from 'react';
 import Turnstile from 'react-turnstile';
 import CheckoutForm from './Components/CheckoutForm/CheckoutForm';
 import OrderHistory from './Components/OrderHistory/OrderHistory';
+import Chatbot from '../Components/Chatbot/Chatbot';
 function App() {
+  // ✅ Track login status
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+    useEffect(() => {
+      const token =
+        localStorage.getItem("token") || sessionStorage.getItem("token");
+      setIsLoggedIn(!!token); // true if token exists
+    }, []);
+  
   
   return (
     <div>
@@ -31,13 +41,15 @@ function App() {
           <Route path='/Skincare' element={<ShopCategory category="Skincare" />} />
           <Route path='/Fruits_Vegetables' element={<ShopCategory category="Fruits_Vegetables" />} />
           <Route path="/search" element={<SearchResults />} />
-          <Route path='/order-history' element={<OrderHistory/>} />
+          {isLoggedIn &&
+          <Route path='/order-history' element={<OrderHistory/>} />}
           <Route path='/product/:productId' element={<Product />} />
           <Route path='/cart' element={<Cart />} />
           <Route path='/login' element={<LoginSignup />} />
           <Route path='/checkout' element={<CheckoutForm/>} />
         </Routes>
-
+         {/* ✅ Show chatbot only if logged in */}
+      {isLoggedIn && <Chatbot />}
         <Footer />
       </BrowserRouter>
     </div>
