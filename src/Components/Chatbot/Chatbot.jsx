@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import "./Chatbot.css";
-import help_icon from "../Assests/help_icon.png";
+import help_icon from "../Assests/Tech Support.gif";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { ShopContext } from "../../Context/ShopContext";
 import axios from "axios";
